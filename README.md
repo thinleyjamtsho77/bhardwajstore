@@ -1,1 +1,188 @@
-# bhardwajstore
+# Bhardwaj Store Web Application
+
+## Project Overview
+
+**Bhardwaj Store** is a local grocery store based in Amritsar, Punjab, India. To keep pace with the growing demand for online shopping, this project focuses on digitalizing the store's operations through a dedicated web application. 
+
+The goal of the platform is to increase customer convenience, broaden market reach, and optimize day-to-day business efficiency.
+
+
+
+## Primary Goal
+Develop a fully functional web application for **Bhardwaj Store** to digitalize retail operations, expand market reach, and optimize order and inventory management.
+
+
+## SMART Objectives
+
+### Specific
+Design and develop a user-friendly web application that allows customers to browse products and place orders online, while enabling the store owner to manage products, inventory, pricing, and orders efficiently.
+
+### Measurable
+Successfully implement and test the following core features:
+* Product browsing
+* Product search
+* Shopping cart
+* Online order placement
+* Product, inventory, and pricing management
+* Order management
+
+### Achievable
+Use the team's available technical skills and resources to design, develop, and test the application within the project timeline.
+
+### Relevant
+Help Bhardwaj Store digitize its operations, improve customer satisfaction, and enhance overall business efficiency.
+
+### Time-bound
+Complete development and testing within the project timeline, beginning with requirements analysis and design in the initial phase.
+
+
+## Tech Stack
+
+This application uses the **MERN stack**:
+
+* **MySql** – Stores application data.
+* **Express.js** – Handles backend routes and API requests.
+* **React** – Builds the user interface.
+* **Node.js** – Runs the backend server.
+
+## Project Timeline and Progress
+https://bhardwajstore.atlassian.net/jira/software/projects/IP2BGS/summary?atlOrigin=eyJpIjoiMGU5ZDg1OWM1ODQwNDZiNGE5NDNiYmU0OGFjYzEzMmQiLCJwIjoiaiJ9
+
+## Getting started
+
+Follow these steps to run the project on your computer.
+
+### 1. Install the required software
+
+* Node.js 24 LTS and npm
+* Git
+* MySQL Server
+
+Make sure MySQL Server is running.
+
+### 2. Clone the repository
+
+```bash
+git clone https://github.com/thinleyjamtsho77/bhardwajstore.git
+cd bhardwajstore
+```
+
+### 3. Install dependencies
+
+Run these commands from the project’s root folder:
+
+```bash
+npm ci --prefix client
+npm ci --prefix server
+```
+
+### 4. Set up your local database
+
+Log in to MySQL using your administrator account:
+
+```bash
+mysql -u root -p
+```
+
+Run the following SQL. Replace `your_local_password` with a password of your choice:
+
+```sql
+CREATE DATABASE bhardwaj_db CHARACTER SET utf8mb4;
+
+CREATE USER 'superadmin'@'127.0.0.1'
+IDENTIFIED BY 'your_local_password';
+
+GRANT SELECT, INSERT, UPDATE, DELETE
+ON bhardwaj_db.*
+TO 'superadmin'@'127.0.0.1';
+
+EXIT;
+```
+
+You will be using your own DB for development.
+
+### 5. Configure the backend
+
+Create a file named `.env` inside the `server` folder:
+
+```dotenv
+PORT=5000
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=superadmin
+DB_PASSWORD=your_local_password
+DB_NAME=bhardwaj_db
+```
+
+Use the password you created in the previous step. Do not commit `.env` to GitHub.
+
+### 6. Start the application
+
+Open two terminals in the project’s root folder.
+
+**Terminal 1 — Backend:**
+
+```bash
+cd server
+npm run dev
+```
+
+**Terminal 2 — Frontend:**
+
+```bash
+cd client
+npm run dev
+```
+
+Keep both terminals open while working.
+
+### 7. Check that everything works
+
+* Frontend: http://localhost:5173
+* Backend and database check: http://localhost:5000/api/health
+
+The backend health check should return:
+
+```json
+{
+  "status": "ok",
+  "database": "connected"
+}
+```
+
+### Working on a feature
+
+Start from an updated `main` branch:
+
+```bash
+git switch main
+git pull --ff-only origin main
+git switch -c feature/your-feature-name
+```
+
+After completing and testing your changes:
+
+```bash
+git add .
+git commit -m "Your Name/Describe your changes"
+git push -u origin feature/your-feature-name
+```
+
+Open a pull request on GitHub and request a teammate’s review before merging.
+
+
+## Project Structure
+
+A brief guide to the main folders.
+
+| Folder           | Purpose                                                  |
+| ---------------- | -------------------------------------------------------- |
+| `client/`        | React frontend and its configuration                     |
+| `client/src/`    | Frontend components, pages, styles, and API calls        |
+| `client/public/` | Static files such as images and icons                    |
+| `server/`        | Express backend and its configuration                    |
+| `server/src/`    | Backend server code, API routes, and database connection |
+
+Each application has its own `package.json` for dependencies and scripts. Backend environment settings are stored in `server/.env`, please do not commit to GitHub.
+
+
