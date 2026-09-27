@@ -1,0 +1,13 @@
+| Path                      | Contents                           |
+| ------------------------- | ---------------------------------- |
+| `client/src/components/`  | Reusable React components          |
+| `client/src/pages/`       | Application screens                |
+| `client/src/services/`    | Functions that call backend APIs   |
+| `server/src/routes/`      | API endpoint definitions           |
+| `server/src/controllers/` | Request and response handling      |
+| `server/src/services/`    | Business logic                     |
+| `server/src/db/`          | Database connection and queries    |
+| `server/migrations/`      | Versioned database schema changes  |
+| `server/seeds/`           | Sample development data            |
+| `docs/`                   | API contracts and design decisions |
+| `.github/workflows/`      | Automated GitHub checks            |
