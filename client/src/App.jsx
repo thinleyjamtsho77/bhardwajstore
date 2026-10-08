@@ -1,121 +1,157 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [categories, setCategories] = useState([])
+  const [categoriesLoading, setCategoriesLoading] = useState(true)
+  const [categoriesError, setCategoriesError] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState(null)
+
+  const [productResult, setProductResult] = useState({
+    categoryId: null,
+    products: [],
+    error: '',
+  })
+
+  // Load categories when the page opens.
+  useEffect(() => {
+    const controller = new AbortController()
+
+    async function loadCategories() {
+      try {
+        const response = await fetch('/api/categories', {
+          signal: controller.signal,
+        })
+
+        if (!response.ok) {
+          throw new Error('Unable to load categories')
+        }
+
+        const data = await response.json()
+        setCategories(data)
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setCategoriesError(error.message)
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setCategoriesLoading(false)
+        }
+      }
+    }
+
+    loadCategories()
+
+    return () => controller.abort()
+  }, [])
+
+  // Load products whenever the selected category changes.
+  useEffect(() => {
+    if (!selectedCategory) return
+
+    const controller = new AbortController()
+    const categoryId = selectedCategory.id
+
+    async function loadProducts() {
+      try {
+        const response = await fetch(
+          `/api/products?categoryId=${categoryId}`,
+          { signal: controller.signal }
+        )
+
+        if (!response.ok) {
+          throw new Error('Unable to load products')
+        }
+
+        const data = await response.json()
+
+        if (!controller.signal.aborted) {
+          setProductResult({
+            categoryId,
+            products: data,
+            error: '',
+          })
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setProductResult({
+            categoryId,
+            products: [],
+            error: error.message,
+          })
+        }
+      }
+    }
+
+    loadProducts()
+
+    return () => controller.abort()
+  }, [selectedCategory])
+
+  const productsLoading =
+    selectedCategory !== null &&
+    productResult.categoryId !== selectedCategory.id
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <main>
+      <h1>Bhardwaj Store — Categories</h1>
 
-      <div className="ticks"></div>
+      {categoriesLoading && (
+        <p role="status">Loading categories...</p>
+      )}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {categoriesError && (
+        <p role="alert">{categoriesError}. Please refresh to try again.</p>
+      )}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      {!categoriesLoading &&
+        !categoriesError &&
+        categories.length === 0 && (
+          <p>No categories available.</p>
+        )}
+
+      <div role="group" aria-label="Product categories">
+        {categories.map((category) => (
+          <button
+            key={category.id}
+            type="button"
+            aria-pressed={selectedCategory?.id === category.id}
+            onClick={() => setSelectedCategory(category)}
+          >
+            {category.name}
+          </button>
+        ))}
+      </div>
+
+      {!selectedCategory && <p>Please select a category.</p>}
+
+      {selectedCategory && (
+        <section aria-labelledby="products-heading">
+          <h2 id="products-heading">
+            Products in {selectedCategory.name}
+          </h2>
+
+          {productsLoading ? (
+            <p role="status">Loading products...</p>
+          ) : productResult.error ? (
+            <p role="alert">
+              {productResult.error}. Please select another category
+              and try again.
+            </p>
+          ) : productResult.products.length === 0 ? (
+            <p>No products available in this category.</p>
+          ) : (
+            <ul>
+              {productResult.products.map((product) => (
+                <li key={product.id}>
+                  {product.name} — ${Number(product.price).toFixed(2)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
+    </main>
   )
 }
 
