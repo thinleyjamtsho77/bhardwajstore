@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import UserProfile from './UserProfile'
 import './App.css'
 
 function App() {
+  const [currentPage, setCurrentPage] = useState('categories')
   const [categories, setCategories] = useState([])
   const [categoriesLoading, setCategoriesLoading] = useState(true)
   const [categoriesError, setCategoriesError] = useState('')
@@ -91,11 +93,31 @@ function App() {
   const productsLoading =
     selectedCategory !== null &&
     productResult.categoryId !== selectedCategory.id
+      if (currentPage === 'profile') {
+    return (
+      <main>
+        <h1>Bhardwaj Store</h1>
 
+        <button
+          type="button"
+          onClick={() => setCurrentPage('categories')}
+        >
+          Back to Categories
+        </button>
+
+        <UserProfile />
+      </main>
+    )
+  }
   return (
     <main>
       <h1>Bhardwaj Store — Categories</h1>
-
+            <button
+        type="button"
+        onClick={() => setCurrentPage('profile')}
+      >
+        My Profile
+      </button>
       {categoriesLoading && (
         <p role="status">Loading categories...</p>
       )}
