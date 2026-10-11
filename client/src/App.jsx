@@ -1,180 +1,63 @@
-import { useEffect, useState } from 'react'
-import UserProfile from './pages/UserProfile'
-import './App.css'
+import { Routes, Route, Link } from "react-router";
+import MainLayout from "./components/main-layout";
+import Home from "./pages/home";
+import UserLogin from "./pages/user-login-page";
+import UserRegister from "./pages/user-register";
+import Categories from "./pages/categories";
+import UserProfile from "./pages/UserProfile";
 
-function App() {
-  const [currentPage, setCurrentPage] = useState('categories')
-  const [categories, setCategories] = useState([])
-  const [categoriesLoading, setCategoriesLoading] = useState(true)
-  const [categoriesError, setCategoriesError] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState(null)
+const Page = ({ title }) => <h1 style={{ padding: 48 }}>{title}</h1>;
 
-  const [productResult, setProductResult] = useState({
-    categoryId: null,
-    products: [],
-    error: '',
-  })
-
-  // Load categories when the page opens.
-  useEffect(() => {
-    const controller = new AbortController()
-
-    async function loadCategories() {
-      try {
-        const response = await fetch('/api/categories', {
-          signal: controller.signal,
-        })
-
-        if (!response.ok) {
-          throw new Error('Unable to load categories')
-        }
-
-        const data = await response.json()
-        setCategories(data)
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          setCategoriesError(error.message)
-        }
-      } finally {
-        if (!controller.signal.aborted) {
-          setCategoriesLoading(false)
-        }
-      }
-    }
-
-    loadCategories()
-
-    return () => controller.abort()
-  }, [])
-
-  // Load products whenever the selected category changes.
-  useEffect(() => {
-    if (!selectedCategory) return
-
-    const controller = new AbortController()
-    const categoryId = selectedCategory.id
-
-    async function loadProducts() {
-      try {
-        const response = await fetch(
-          `/api/products?categoryId=${categoryId}`,
-          { signal: controller.signal }
-        )
-
-        if (!response.ok) {
-          throw new Error('Unable to load products')
-        }
-
-        const data = await response.json()
-
-        if (!controller.signal.aborted) {
-          setProductResult({
-            categoryId,
-            products: data,
-            error: '',
-          })
-        }
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          setProductResult({
-            categoryId,
-            products: [],
-            error: error.message,
-          })
-        }
-      }
-    }
-
-    loadProducts()
-
-    return () => controller.abort()
-  }, [selectedCategory])
-
-  const productsLoading =
-    selectedCategory !== null &&
-    productResult.categoryId !== selectedCategory.id
-      if (currentPage === 'profile') {
-    return (
-      <main>
-        <h1>Bhardwaj Store</h1>
-
-        <button
-          type="button"
-          onClick={() => setCurrentPage('categories')}
-        >
-          Back to Categories
-        </button>
-
-        <UserProfile />
-      </main>
-    )
-  }
+function CategoriesPage() {
   return (
-    <main>
-      <h1>Bhardwaj Store — Categories</h1>
-            <button
-        type="button"
-        onClick={() => setCurrentPage('profile')}
-      >
-        My Profile
-      </button>
-      {categoriesLoading && (
-        <p role="status">Loading categories...</p>
-      )}
-
-      {categoriesError && (
-        <p role="alert">{categoriesError}. Please refresh to try again.</p>
-      )}
-
-      {!categoriesLoading &&
-        !categoriesError &&
-        categories.length === 0 && (
-          <p>No categories available.</p>
-        )}
-
-      <div role="group" aria-label="Product categories">
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            type="button"
-            aria-pressed={selectedCategory?.id === category.id}
-            onClick={() => setSelectedCategory(category)}
-          >
-            {category.name}
-          </button>
-        ))}
+    <>
+      <div style={{ padding: 24 }}>
+        <Link to="/profile-preview">My Profile (demo)</Link>
       </div>
 
-      {!selectedCategory && <p>Please select a category.</p>}
-
-      {selectedCategory && (
-        <section aria-labelledby="products-heading">
-          <h2 id="products-heading">
-            Products in {selectedCategory.name}
-          </h2>
-
-          {productsLoading ? (
-            <p role="status">Loading products...</p>
-          ) : productResult.error ? (
-            <p role="alert">
-              {productResult.error}. Please select another category
-              and try again.
-            </p>
-          ) : productResult.products.length === 0 ? (
-            <p>No products available in this category.</p>
-          ) : (
-            <ul>
-              {productResult.products.map((product) => (
-                <li key={product.id}>
-                  {product.name} — ${Number(product.price).toFixed(2)}
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      )}
-    </main>
-  )
+      <Categories />
+    </>
+  );
 }
 
-export default App
+function UserProfilePreview() {
+  return (
+    <main style={{ padding: 24 }}>
+      <h1>Bhardwaj Store — Profile Preview</h1>
+
+      <Link to="/categories">Back to Categories</Link>
+
+      <UserProfile />
+    </main>
+  );
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/categories" element={<CategoriesPage />} />
+        <Route path="/profile-preview" element={<UserProfilePreview />} />
+        <Route path="/deals" element={<Page title="Deals" />} />
+        <Route path="/faqs" element={<Page title="FAQs" />} />
+        <Route path="/about" element={<Page title="About Us" />} />
+        <Route
+          path="/click-and-collect"
+          element={<Page title="How Click & Collect Works" />}
+        />
+        <Route
+          path="/refund-policy"
+          element={<Page title="Order Cancellation and Refund Policy" />}
+        />
+        <Route path="/terms" element={<Page title="Terms & Conditions" />} />
+        <Route path="/privacy" element={<Page title="Privacy Policy" />} />
+        <Route path="/cart" element={<Page title="Cart" />} />
+        <Route path="/search" element={<Page title="Search" />} />
+      </Route>
+
+      <Route path="/login" element={<UserLogin registerTo="/register" />} />
+      <Route path="/register" element={<UserRegister />} />
+    </Routes>
+  );
+}

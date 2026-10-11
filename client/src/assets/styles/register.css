@@ -1,0 +1,66 @@
+.login-header--bordered {
+  border-bottom: 1px solid #c8c8c8;
+}
+
+
+.login-card--compact .login-subtitle {
+  margin: 4px 0 16px;
+}
+
+.login-card--compact .login-divider {
+  margin: 20px 0 8px;
+}
+
+.login-card--compact .login-field {
+  margin-top: 10px;
+}
+
+.login-card--compact .login-field > label {
+  margin-bottom: 8px;
+  font-size: 18px;
+  line-height: 22px;
+}
+
+.login-card--compact .login-field input {
+  height: 50px;
+}
+
+/* eye button is smaller to match the shorter inputs */
+.login-card--compact .login-password-toggle {
+  top: 5px;
+}
+
+/* terms checkbox row */
+.register-terms {
+  margin-top: 14px;
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.register-terms a {
+  color: #399f41;
+}
+
+.register-terms a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.login-card--compact .login-submit {
+  margin-top: 12px;
+  min-height: 56px;
+}
+
+.login-card--compact .login-register {
+  margin-top: 14px;
+}
+
+@media (max-width: 479px) {
+  .login-card--compact .login-field input {
+    height: 48px;
+  }
+
+  .login-card--compact .login-password-toggle {
+    top: 4px;
+  }
+}
