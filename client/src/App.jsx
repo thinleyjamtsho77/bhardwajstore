@@ -4,7 +4,7 @@ import Home from "./pages/home";
 import UserLogin from "./pages/user-login-page";
 import UserRegister from "./pages/user-register";
 import Categories from "./pages/categories";
-import AdminCategories from "./AdminCategories";
+import AdminCategories from "./pages/AdminCategories";
 
 const Page = ({ title }) => <h1 style={{ padding: 48 }}>{title}</h1>;
 
