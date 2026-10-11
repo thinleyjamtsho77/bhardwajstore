@@ -1,5 +1,76 @@
 # Bhardwaj Store Web Application
 
+## Project Structure (Guide)
+
+Please use this as a guide when creating pages and adding features.
+
+```text
+bhardwaj-grocery-store/
+├── client/                       # React frontend
+│   ├── public/                   # Static files served directly
+│   │   └── favicon
+│   ├── src/
+│   │   ├── assets/               # Imported images and logos
+│   │   │   ├── images/
+│   │   │   └── logo
+│   │   ├── styles/
+│   │   │   ├── index.css         # Global styles
+│   │   │   ├── navbar.css
+│   │   │   ├── categories.css
+│   │   │   └── footer.css
+│   │   ├── components/           # Reusable components
+│   │   │   ├── header.jsx
+│   │   │   ├── footer.jsx
+│   │   │   └── main-layout.jsx
+│   │   ├── pages/                # Pages displayed by routes
+│   │   │   ├── Home.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Categories.jsx
+│   │   │   └── register.jsx
+│   │   ├── services/
+│   │   │   └── api.js            # Frontend API requests
+│   │   ├── App.jsx               # Routes and shared layouts
+│   │   └── main.jsx              # React entry point
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   └── vite.config.js
+├── server/                       # Express backend
+│   ├── src/
+│   │   ├── config/
+│   │   │   └── db.js             # MySQL connection pool
+│   │   ├── routes/               # API endpoints
+│   │   │   ├── authRoutes.js
+│   │   │   ├── productRoutes.js
+│   │   │   └── cartRoutes.js
+│   │   ├── controllers/          # Request handlers
+│   │   │   ├── authController.js
+│   │   │   ├── productController.js
+│   │   │   └── cartController.js
+│   │   ├── models/               # Database queries
+│   │   │   ├── userModel.js
+│   │   │   ├── productModel.js
+│   │   │   └── cartModel.js
+│   │   └── index.js              # Express entry point
+│   ├── database/
+│   │   └── schema.sql            # Database table definitions
+│   ├── .env                      # Local configuration
+│   ├── package.json
+│   └── package-lock.json
+├── .gitignore
+└── README.md
+```
+A brief guide to the main folders.
+
+| Folder           | Purpose                                                  |
+| ---------------- | -------------------------------------------------------- |
+| `client/`        | React frontend and its configuration                     |
+| `client/src/`    | Frontend components, pages, styles, and API calls        |
+| `server/`        | Express backend and its configuration                    |
+| `server/src/`    | Backend server code, API routes, and database connection |
+
+Each application has its own `package.json` for dependencies and scripts. Backend environment settings are stored in `server/.env`, please do not commit to GitHub.
+
 ## Project Overview
 
 **Bhardwaj Store** is a local grocery store based in Amritsar, Punjab, India. To keep pace with the growing demand for online shopping, this project focuses on digitalizing the store's operations through a dedicated web application. 
@@ -169,20 +240,5 @@ git push -u origin feature/your-feature-name
 ```
 
 Open a pull request on GitHub and request a teammate’s review before merging.
-
-
-## Project Structure
-
-A brief guide to the main folders.
-
-| Folder           | Purpose                                                  |
-| ---------------- | -------------------------------------------------------- |
-| `client/`        | React frontend and its configuration                     |
-| `client/src/`    | Frontend components, pages, styles, and API calls        |
-| `client/public/` | Static files such as images and icons                    |
-| `server/`        | Express backend and its configuration                    |
-| `server/src/`    | Backend server code, API routes, and database connection |
-
-Each application has its own `package.json` for dependencies and scripts. Backend environment settings are stored in `server/.env`, please do not commit to GitHub.
 
 

@@ -1,0 +1,110 @@
+/* 1. Shared fonts and colors */
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light;
+
+  --color-primary: #2c7d32;
+  --color-primary-hover: #236428;
+  --color-background: #ffffff;
+  --color-surface: #f5f7fb;
+  --color-text: #111827;
+  --color-text-muted: #6b7280;
+  --color-border: #d9d9d9;
+}
+
+/* 2. Include padding and borders inside declared element widths */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 3. A light, full-width application background */
+html {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+body {
+  margin: 0;
+  display: block;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+/* Remove the centered, width-limited Vite starter container */
+#root {
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+/* 4. Consistent headings; each page can choose its own sizes */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: inherit;
+  line-height: 1.2;
+}
+
+/* 5. Shared link colors; navigation can customize its own decoration */
+a {
+  color: var(--color-primary);
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+/* 6. Images and videos fit their containers */
+img,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* 7. Form controls use the same typography as the rest of the site */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button:not(:disabled),
+input[type="checkbox"]:not(:disabled),
+input[type="radio"]:not(:disabled) {
+  cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+}
+
+/* 8. A visible outline when navigating with the keyboard */
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+/* Preserve the HTML hidden attribute after display resets */
+[hidden] {
+  display: none !important;
+}
