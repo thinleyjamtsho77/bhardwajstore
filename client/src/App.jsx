@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import UserProfile from './UserProfile'
+import UserProfile from './pages/UserProfile'
 import './App.css'
 
 function App() {
