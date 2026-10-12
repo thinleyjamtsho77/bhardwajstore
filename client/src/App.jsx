@@ -1,36 +1,11 @@
-import { Routes, Route, Link } from "react-router";
+import { Routes, Route } from "react-router";
 import MainLayout from "./components/main-layout";
+import Page from "./components/PlaceholderPage";
 import Home from "./pages/home";
 import UserLogin from "./pages/user-login-page";
 import UserRegister from "./pages/user-register";
-import Categories from "./pages/categories";
-import UserProfile from "./pages/UserProfile";
-
-const Page = ({ title }) => <h1 style={{ padding: 48 }}>{title}</h1>;
-
-function CategoriesPage() {
-  return (
-    <>
-      <div style={{ padding: 24 }}>
-        <Link to="/profile-preview">My Profile (demo)</Link>
-      </div>
-
-      <Categories />
-    </>
-  );
-}
-
-function UserProfilePreview() {
-  return (
-    <main style={{ padding: 24 }}>
-      <h1>Bhardwaj Store — Profile Preview</h1>
-
-      <Link to="/categories">Back to Categories</Link>
-
-      <UserProfile />
-    </main>
-  );
-}
+import CategoriesPage from "./pages/CategoriesPage";
+import UserProfilePreview from "./pages/UserProfilePreview";
 
 export default function App() {
   return (
