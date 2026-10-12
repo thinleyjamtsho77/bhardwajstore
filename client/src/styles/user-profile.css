@@ -1,0 +1,133 @@
+.user-profile {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 600px;
+  margin: 24px auto;
+  padding: 32px;
+  color: #17251b;
+  background: #fff;
+  border: 1px solid #dce5dd;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgb(0 0 0 / 6%);
+}
+
+.user-profile *,
+.user-profile *::before,
+.user-profile *::after {
+  box-sizing: border-box;
+}
+
+.user-profile h2 {
+  margin: 0 0 16px;
+  color: #205b2b;
+  font-size: 1.75rem;
+}
+
+.user-profile__notice {
+  margin: 0 0 24px;
+  padding: 16px;
+  background: #f0f7ef;
+  border-left: 4px solid #287235;
+  border-radius: 6px;
+  line-height: 1.6;
+}
+
+.user-profile__form {
+  display: grid;
+  gap: 20px;
+}
+
+.user-profile__field {
+  display: grid;
+  gap: 8px;
+}
+
+.user-profile__field label {
+  font-weight: 600;
+}
+
+.user-profile__field input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px;
+  color: #17251b;
+  background: #fff;
+  border: 1px solid #87958a;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 1rem;
+}
+
+.user-profile__field input[readonly] {
+  color: #4b5650;
+  background: #f1f3f1;
+}
+
+.user-profile__field small {
+  color: #4b5650;
+  line-height: 1.5;
+}
+
+.user-profile__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.user-profile__actions button {
+  min-height: 48px;
+  padding: 12px 20px;
+  border: 1px solid #205b2b;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.user-profile__primary {
+  color: #fff;
+  background: #205b2b;
+}
+
+.user-profile__primary:hover {
+  background: #174420;
+}
+
+.user-profile__secondary {
+  color: #205b2b;
+  background: #fff;
+}
+
+.user-profile__secondary:hover {
+  background: #f0f7ef;
+}
+
+.user-profile input:focus-visible,
+.user-profile button:focus-visible {
+  outline: 3px solid #b35a00;
+  outline-offset: 3px;
+}
+
+.user-profile__message {
+  margin: 20px 0 0;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.user-profile__message:empty {
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .user-profile {
+    padding: 20px;
+  }
+
+  .user-profile__actions {
+    flex-direction: column;
+  }
+
+  .user-profile__actions button {
+    width: 100%;
+  }
+}

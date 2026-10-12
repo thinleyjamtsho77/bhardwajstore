@@ -1,5 +1,5 @@
 import { useState } from 'react'
-
+import '../styles/user-profile.css'
 const demoProfile = {
   name: 'Demo Customer',
   email: 'customer@example.com',
@@ -41,15 +41,15 @@ function UserProfile() {
   }
 
   return (
-    <section aria-labelledby="profile-heading">
+    <section className="user-profile" aria-labelledby="profile-heading">
       <h2 id="profile-heading">User Profile</h2>
 
       <p>
         Demo profile: refreshing the page resets these details.
       </p>
 
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form className="user-profile__form" onSubmit={handleSubmit}>
+          <div className="user-profile__field">
           <label htmlFor="profile-name">Name</label>
           <input
             id="profile-name"
@@ -65,7 +65,7 @@ function UserProfile() {
           />
         </div>
 
-        <div>
+         <div className="user-profile__field">
           <label htmlFor="profile-email">Email</label>
           <input
             id="profile-email"
@@ -75,7 +75,7 @@ function UserProfile() {
           />
         </div>
 
-        <div>
+        <div className="user-profile__field">
           <label htmlFor="profile-phone">Phone (optional)</label>
           <input
             id="profile-phone"
@@ -90,10 +90,19 @@ function UserProfile() {
           />
         </div>
 
-        <button type="submit">Update preview</button>
-        <button type="button" onClick={handleCancel}>
-          Cancel
+        <div className="user-profile__actions">
+        <button className="user-profile__primary" type="submit">
+         Update preview
         </button>
+
+        <button
+        className="user-profile__secondary"
+        type="button"
+        onClick={handleCancel}
+        >
+        Cancel
+        </button>
+        </div>
       </form>
 
       <p role="status">{message}</p>
