@@ -1,45 +1,19 @@
-import { Routes, Route, Link } from "react-router";
+import { Routes, Route } from "react-router";
 import MainLayout from "./components/main-layout";
 import Home from "./pages/home";
 import UserLogin from "./pages/user-login-page";
 import UserRegister from "./pages/user-register";
-import Categories from "./pages/categories";
-import AdminCategories from "./pages/AdminCategories";
+import AdminCategoriesPage from "./pages/AdminCategoriesPage";
+import AdminCategoriesPreview from "./pages/admin/AdminCategoriesPreview";
+import Page from "./components/PlaceholderPage";
 
-const Page = ({ title }) => <h1 style={{ padding: 48 }}>{title}</h1>;
-
-function CategoriesPage() {
-  return (
-    <>
-      <div style={{ padding: 24 }}>
-        <Link to="/admin-categories-preview">
-          Manage Categories (demo)
-        </Link>
-      </div>
-
-      <Categories />
-    </>
-  );
-}
-
-function AdminCategoriesPreview() {
-  return (
-    <main style={{ padding: 24 }}>
-      <h1>Bhardwaj Store — Admin Preview</h1>
-
-      <Link to="/categories">Back to Categories</Link>
-
-      <AdminCategories />
-    </main>
-  );
-}
 
 export default function App() {
   return (
     <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/categories" element={<CategoriesPage />} />
+        <Route path="/categories" element={<AdminCategoriesPage />} />
         <Route
           path="/admin-categories-preview"
           element={<AdminCategoriesPreview />}
