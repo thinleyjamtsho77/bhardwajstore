@@ -4,6 +4,9 @@ import Page from "./components/PlaceholderPage";
 import Home from "./pages/home";
 import UserLogin from "./pages/user-login-page";
 import UserRegister from "./pages/user-register";
+import AdminCategoriesPage from "./pages/AdminCategoriesPage";
+import AdminCategoriesPreview from "./pages/admin/AdminCategoriesPreview";
+import Page from "./components/PlaceholderPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import UserProfilePreview from "./pages/UserProfilePreview";
 
@@ -12,6 +15,11 @@ export default function App() {
     <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/admin/categories" element={<AdminCategoriesPage />} />
+        <Route
+          path="/admin-categories-preview"
+          element={<AdminCategoriesPreview />}
+        />
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/profile-preview" element={<UserProfilePreview />} />
         <Route path="/deals" element={<Page title="Deals" />} />
