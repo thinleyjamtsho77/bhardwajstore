@@ -9,8 +9,7 @@
 .site-header {
   background: #fff;
   border-bottom: 1px solid var(--hdr-border);
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 100;
 }
 
