@@ -80,9 +80,19 @@ export default function Header({ cartCount = 0, user = null, onSearch, onLogin, 
             <SearchIcon />
           </button>
 
-          <Link to="/cart" className="icon-btn" aria-label={`Basket, ${cartCount} items`}>
-            <BasketIcon />
-            {cartCount > 0 && <span className="icon-btn__badge">{cartCount}</span>}
+          <Link
+           to="/cart"
+           className="icon-btn"
+           aria-label={
+           cartCount === null
+           ? "Basket, item count unavailable"
+           : `Basket, ${cartCount} items`
+           }
+           >
+           <BasketIcon />
+          {cartCount > 0 && (
+          <span className="icon-btn__badge">{cartCount}</span>
+          )}
           </Link>
 
           {user ? (
