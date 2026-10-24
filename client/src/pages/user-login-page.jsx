@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import Logo from "../assets/images/logo-header.png";
 import LoginImage from "../assets/images/login_image.png";
 import "../assets/styles/index.css";
@@ -34,27 +34,45 @@ function EyeIcon({ visible }) {
   );
 }
 
-/**
- * Optional integration props:
- * onLogin({ email, password, rememberMe }): async server sign-in callback.
- * onGoogleLogin / onAppleLogin: real provider sign-in callbacks.
- * registerTo / forgotPasswordTo: existing routes, when those pages are built.
- * The page never stores a password or pretends a demo submission is a login.
- */
+// Calls the Express API. Throws an Error with a readable message on failure.
+async function loginUser({ email, password, rememberMe }) {
+  let res;
+  try {
+    res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, rememberMe }),
+    });
+  } catch {
+    throw new Error("Could not reach the server. Please try again.");
+  }
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || "Login failed.");
+  return data;
+}
+
 export default function Login({
   guestTo = "/",
-  registerTo,
+  registerTo = "/register",
   forgotPasswordTo,
-  onLogin,
+  afterLoginTo = "/",
   onGoogleLogin,
   onAppleLogin,
 }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [pending, setPending] = useState(false);
-  const [notice, setNotice] = useState(null);
+  const [notice, setNotice] = useState(
+    location.state?.registered
+      ? { type: "info", text: "Account created. Please log in." }
+      : null
+  );
 
   function showUnavailable(feature) {
     setNotice({
@@ -67,18 +85,17 @@ export default function Login({
     event.preventDefault();
     setNotice(null);
 
-    if (!onLogin) {
-      showUnavailable("Sign in");
+    if (!email.trim() || !password) {
+      setNotice({ type: "error", text: "Enter your email and password." });
       return;
     }
 
     setPending(true);
     try {
-      // Your callback should call Express and navigate after successful login.
-      await onLogin({ email: email.trim(), password, rememberMe });
-    } catch {
-      setNotice({ type: "error", text: "We couldn’t sign you in. Check your details and try again." });
-    } finally {
+      await loginUser({ email: email.trim(), password, rememberMe });
+      navigate(afterLoginTo);
+    } catch (err) {
+      setNotice({ type: "error", text: err?.message || "We couldn’t sign you in. Check your details and try again." });
       setPending(false);
     }
   }
@@ -130,7 +147,7 @@ export default function Login({
 
             <div className="login-divider"><span>or Sign in with Email</span></div>
 
-            <form id="login-form" onSubmit={handleLogin} aria-busy={pending}>
+            <form id="login-form" onSubmit={handleLogin} aria-busy={pending} noValidate>
               <div className="login-field login-field--email">
                 <label htmlFor="login-email">Email</label>
                 <input
@@ -141,6 +158,7 @@ export default function Login({
                   placeholder="user1@gmail.com"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
+                  maxLength={100}
                   required
                   disabled={pending}
                 />
@@ -157,6 +175,7 @@ export default function Login({
                     placeholder="••••••••••"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
+                    maxLength={72}
                     required
                     disabled={pending}
                   />
@@ -189,16 +208,16 @@ export default function Login({
                 {pending ? "Signing in…" : "Login"}
               </button>
 
-              {notice && <p className={`login-notice login-notice--${notice.type}`} role={notice.type === "error" ? "alert" : "status"}>{notice.text}</p>}
+              {notice && (
+                <p className={`login-notice login-notice--${notice.type}`} role={notice.type === "error" ? "alert" : "status"}>
+                  {notice.text}
+                </p>
+              )}
             </form>
 
             <p className="login-register">
               Not registered yet?{" "}
-              {registerTo ? (
-                <Link className="login-text-link" to={registerTo}>Create an account</Link>
-              ) : (
-                <button className="login-text-link" type="button" onClick={() => showUnavailable("Account creation")}>Create an account</button>
-              )}
+              <Link className="login-text-link" to={registerTo}>Create an account</Link>
             </p>
           </div>
         </section>
