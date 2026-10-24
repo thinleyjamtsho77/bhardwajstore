@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import pool from "../config/db.js";
+import jwt from "jsonwebtoken";
 
 export async function register(req, res) {
   const { name, email, phone, password } = req.body;
@@ -55,5 +56,61 @@ export async function register(req, res) {
     }
     console.error("Registration failed:", error.code);
     res.status(500).json({ message: "Unable to register" });
+  }
+}
+
+// Used so a wrong email takes as long to reject as a wrong password
+const DUMMY_HASH = bcrypt.hashSync("not-a-real-password", 12);
+
+export async function login(req, res) {
+  const { email, password, rememberMe } = req.body;
+
+  if (typeof email !== "string" || typeof password !== "string" || !email || !password) {
+    return res.status(400).json({ message: "Email and password are required" });
+  }
+  if (password.length > 72) {
+    return res.status(401).json({ message: "Incorrect email or password" });
+  }
+
+  try {
+    const [rows] = await pool.execute(
+      `SELECT user_id, name, email, phone, password_hash, role, account_status
+       FROM users WHERE email = ?`,
+      [email.trim().toLowerCase()]
+    );
+    const user = rows[0];
+
+    const passwordOk = await bcrypt.compare(password, user ? user.password_hash : DUMMY_HASH);
+    if (!user || !passwordOk) {
+      return res.status(401).json({ message: "Incorrect email or password" });
+    }
+    if (user.account_status !== "active") {
+      return res.status(403).json({ message: "This account is not active. Please contact the store." });
+    }
+
+    const token = jwt.sign(
+      { sub: user.user_id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: rememberMe ? "30d" : "1d" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      // "Remember me" = persistent cookie; otherwise it ends when the browser closes
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined,
+    });
+
+    res.json({
+      id: user.user_id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+    });
+  } catch (error) {
+    console.error("Login failed:", error.code || error.message);
+    res.status(500).json({ message: "Unable to sign in" });
   }
 }
