@@ -1,11 +1,19 @@
 require("dotenv").config();
 
+<<<<<<< Updated upstream
 const express = require("express");
 const mysql = require("mysql2/promise");
+=======
+import healthRouter from "./routes/health.js";
+import categoriesRouter from "./routes/categories.js";
+import productsRouter from "./routes/product.js";
+import authRouter from "./routes/auth.js";
+>>>>>>> Stashed changes
 
 const app = express();
 app.use(express.json());
 
+<<<<<<< Updated upstream
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT || 3306),
@@ -14,6 +22,12 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
   connectionLimit: 5,
 });
+=======
+app.use("/api/health", healthRouter);
+app.use("/api/categories", categoriesRouter);
+app.use("/api/products", productsRouter);
+app.use("/api/auth", authRouter);
+>>>>>>> Stashed changes
 
 app.get("/api/health", async (req, res) => {
   try {
