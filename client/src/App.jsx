@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router";
 import MainLayout from "./components/main-layout";
 import Page from "./components/PlaceholderPage";
-import Home from "./pages/home";
-import Cart from "./pages/cartPage";
-import UserLogin from "./pages/user-login-page";
-import UserRegister from "./pages/user-register";
+import Home from "./pages/HomePage";
+import Cart from "./pages/CartPage";
+import UserLogin from "./pages/UserLogin";
+import UserRegister from "./pages/UserRegistration";
 import AdminCategoriesPage from "./pages/AdminCategoriesPage";
 import AdminCategoriesPreview from "./pages/admin/AdminCategoriesPreview";
 import CategoriesPage from "./pages/CategoriesPage";
