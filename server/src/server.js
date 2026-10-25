@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import healthRouter from "./routes/health.js";
 import categoriesRouter from "./routes/categories.js";
@@ -9,8 +10,9 @@ import authRouter from "./routes/auth.js";
 
 const app = express();
 
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
+app.use(cookieParser()); // must be before the routes
 
 app.use("/api/health", healthRouter);
 app.use("/api/categories", categoriesRouter);

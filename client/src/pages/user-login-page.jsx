@@ -4,6 +4,7 @@ import Logo from "../assets/images/logo-header.png";
 import LoginImage from "../assets/images/login_image.png";
 import "../assets/styles/index.css";
 import "../assets/styles/Login.css";
+import { useAuth } from "../context/AuthContext";
 
 function GoogleIcon() {
   return (
@@ -61,6 +62,7 @@ export default function Login({
   onAppleLogin,
 }) {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
   const location = useLocation();
 
   const [email, setEmail] = useState("");
@@ -92,7 +94,8 @@ export default function Login({
 
     setPending(true);
     try {
-      await loginUser({ email: email.trim(), password, rememberMe });
+      const data = await loginUser({ email: email.trim(), password, rememberMe });
+      setUser(data);
       navigate(afterLoginTo);
     } catch (err) {
       setNotice({ type: "error", text: err?.message || "We couldn’t sign you in. Check your details and try again." });
