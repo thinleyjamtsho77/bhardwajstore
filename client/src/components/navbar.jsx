@@ -93,8 +93,12 @@ export default function Header({ cartCount = 0, onSearch }) {
 
   async function handleLogout() {
     closeUserMenu();
-    await logout();
-    navigate("/");
+    try {
+      await logout();
+      navigate("/");
+    } catch (err) {
+      alert(err.message); 
+    }
   }
 
  
