@@ -45,7 +45,7 @@ const PAYMENTS = [
   { src: gpay, alt: "Google Pay" },
 ];
 
-/* ---------- icons ---------- */
+
 const Svg = ({ children, size = 18, viewBox = "0 0 24 24", ...rest }) => (
   <svg viewBox={viewBox} width={size} height={size} fill="currentColor" aria-hidden="true" {...rest}>
     {children}
@@ -88,7 +88,7 @@ const TikTokIcon = () => (
   </Svg>
 );
 
-/* ---------- component ---------- */
+
 export default function Footer() {
   return (
     <footer className="site-footer">
@@ -107,7 +107,6 @@ export default function Footer() {
           </div>
         </section>
 
-        {/* Quick links */}
         <nav className="fcol fcol--links" aria-label="Quick links">
           <h2 className="fcol__title">Quick Links</h2>
           <ul className="flist">
@@ -117,7 +116,7 @@ export default function Footer() {
           </ul>
         </nav>
 
-        {/* Customer service */}
+  
         <nav className="fcol fcol--links" aria-label="Customer service">
           <h2 className="fcol__title">Customer Service</h2>
           <ul className="flist">
