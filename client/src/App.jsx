@@ -1,14 +1,12 @@
 import { Routes, Route } from "react-router";
 import MainLayout from "./components/main-layout";
-import Page from "./components/PlaceholderPage";
 import Home from "./pages/home";
-import Cart from "./pages/cartPage";
 import UserLogin from "./pages/user-login-page";
 import UserRegister from "./pages/user-register";
-import AdminCategoriesPage from "./pages/AdminCategoriesPage";
-import AdminCategoriesPreview from "./pages/admin/AdminCategoriesPreview";
-import CategoriesPage from "./pages/CategoriesPage";
-import UserProfilePreview from "./pages/UserProfilePreview";
+import Categories from "./pages/categories";
+import Search from "./pages/search";
+
+const Page = ({ title }) => <h1 style={{ padding: 48 }}>{title}</h1>;
 
 export default function App() {
   return (
@@ -34,7 +32,7 @@ export default function App() {
         <Route path="/terms" element={<Page title="Terms & Conditions" />} />
         <Route path="/privacy" element={<Page title="Privacy Policy" />} />
         <Route path="/cart" element={<Page title="Cart" />} />
-        <Route path="/search" element={<Page title="Search" />} />
+        <Route path="/search" element={<Search />} />
       </Route>
 
       <Route path="/login" element={<UserLogin registerTo="/register" />} />
