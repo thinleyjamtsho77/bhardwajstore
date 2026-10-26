@@ -26,12 +26,14 @@ export function AuthProvider({ children }) {
   }, []);
 
   const logout = useCallback(async () => {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } finally {
-      setUser(null);
-    }
-  }, []);
+  try {
+    const res = await fetch("/api/auth/logout", { method: "POST" });
+    if (!res.ok) throw new Error("Logout failed");
+    setUser(null);
+  } catch {
+    throw new Error("Could not log out. Please try again.");
+  }
+}, []);
 
   return (
     <AuthContext.Provider value={{ user, setUser, loading, logout }}>

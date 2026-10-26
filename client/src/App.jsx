@@ -1,12 +1,15 @@
 import { Routes, Route } from "react-router";
 import MainLayout from "./components/main-layout";
-import Home from "./pages/home";
-import UserLogin from "./pages/user-login-page";
-import UserRegister from "./pages/user-register";
-import Categories from "./pages/categories";
-import Search from "./pages/search";
-
-const Page = ({ title }) => <h1 style={{ padding: 48 }}>{title}</h1>;
+import Page from "./components/PlaceholderPage";
+import Home from "./pages/HomePage";
+import Cart from "./pages/CartPage";
+import UserLogin from "./pages/UserLogin";
+import UserRegister from "./pages/UserRegistration";
+import AdminCategoriesPage from "./pages/admin/AdminCategories";
+import AdminCategoriesPreview from "./pages/admin/AdminCategories";
+import CategoriesPage from "./pages/CategoriesPage";
+import UserProfilePreview from "./pages/UserProfilePreview";
+import SearchResults from "./pages/search";
 
 export default function App() {
   return (
@@ -32,7 +35,7 @@ export default function App() {
         <Route path="/terms" element={<Page title="Terms & Conditions" />} />
         <Route path="/privacy" element={<Page title="Privacy Policy" />} />
         <Route path="/cart" element={<Page title="Cart" />} />
-        <Route path="/search" element={<Search />} />
+        <Route path="/search" element={<SearchResults />} />
       </Route>
 
       <Route path="/login" element={<UserLogin registerTo="/register" />} />
