@@ -1,0 +1,325 @@
+
+/* ==============================
+   Search page layout
+============================== */
+
+.search-page {
+  display: flex;
+  min-height: 600px;
+  font-family: Arial, sans-serif;
+}
+
+.category-sidebar {
+  flex: 0 0 210px;
+  padding: 32px 24px;
+  background: #17451f;
+  color: white;
+}
+
+.category-sidebar h2 {
+  margin: 12px 0 24px;
+  font-size: 24px;
+}
+
+.category-select {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px 8px;
+  border: none;
+  border-radius: 6px;
+  background: #fff;
+  color: #222;
+  cursor: pointer;
+}
+
+.search-content {
+  flex: 1;
+  min-width: 0;
+  padding: 24px 5%;
+}
+
+.breadcrumb {
+  margin-bottom: 24px;
+  color: #666;
+  font-size: 13px;
+}
+
+/* ==============================
+   Search controls
+============================== */
+
+.search-controls {
+  display: flex;
+  gap: 20px;
+}
+
+.search-controls input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.search-controls input:focus {
+  outline: 2px solid #347041;
+  outline-offset: 1px;
+}
+
+.search-button {
+  padding: 0 28px;
+  border: none;
+  border-radius: 6px;
+  background: #08751b;
+  color: white;
+  cursor: pointer;
+}
+
+/* ==============================
+   Results heading and page info
+============================== */
+
+.results-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0 32px;
+}
+
+.results-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.results-heading h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.results-heading label {
+  font-size: 14px;
+}
+
+.results-heading select {
+  max-width: 100%;
+  padding: 6px;
+}
+
+.current-page-info {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+}
+
+/* ==============================
+   Product cards
+============================== */
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.product-card {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px #0000000d;
+}
+
+.product-image-placeholder {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  background: #f0f0f0;
+  color: #666;
+  font-size: 13px;
+}
+
+.product-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.stock-label {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 5px;
+  background: #d5ead8;
+  color: #275c32;
+  font-size: 12px;
+}
+
+.product-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.wishlist-button {
+  width: 34px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  background: white;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.add-cart-button {
+  flex: 1;
+  padding: 8px 4px;
+  border: none;
+  border-radius: 5px;
+  background: #14251a;
+  color: white;
+  cursor: pointer;
+}
+
+/* ==============================
+   Pagination
+============================== */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 72px 0 20px;
+}
+
+.pagination button {
+  min-width: 36px;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.pagination .page-number {
+  color: #333;
+  font-weight: normal;
+}
+
+.pagination .page-number.active {
+  background: transparent;
+  color: #17451f;
+  font-weight: bold;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.pagination .page-number:hover:not(:disabled) {
+  background: transparent;
+  color: #17451f;
+}
+
+.pagination button:disabled {
+  color: #999;
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.no-results {
+  padding: 32px 0;
+  color: #666;
+  text-align: center;
+}
+
+/* ==============================
+   Shared interaction states
+============================== */
+
+.search-page button,
+.search-page select {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.search-page button:not(:disabled):hover {
+  filter: brightness(0.88);
+}
+
+.search-page .category-select:hover {
+  background-color: #eaf3eb;
+}
+
+.wishlist-button:hover {
+  background-color: #eaf3eb;
+  color: #17451f;
+}
+
+.add-cart-button:hover {
+  background-color: #347041;
+}
+
+/* ==============================
+   Responsive layout
+============================== */
+
+@media (max-width: 760px) {
+  .category-sidebar {
+    flex-basis: 125px;
+    padding: 20px 12px;
+  }
+
+  .search-content {
+    padding: 20px 12px;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .results-heading h2 {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-page {
+    flex-direction: column;
+  }
+
+  .category-sidebar {
+    flex-basis: auto;
+  }
+
+  .category-sidebar h2 {
+    margin: 0 0 12px;
+  }
+
+  .search-controls {
+    gap: 8px;
+  }
+
+  .search-button {
+    padding: 0 14px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+
+@media (prefers-reduced-motion: reduce) {
+  .search-page button,
+  .search-page select {
+    transition: none;
+  }
+}
