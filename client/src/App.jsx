@@ -13,17 +13,28 @@ export default function App() {
     <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/categories" element={<Categories />} />
+        <Route path="/admin/categories" element={<AdminCategoriesPage />} />
+        <Route path="/admin-categories-preview" element={<AdminCategoriesPreview />}/>
+        <Route path="/categories" element={<CategoriesPage />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/profile-preview" element={<UserProfilePreview />} />
         <Route path="/deals" element={<Page title="Deals" />} />
         <Route path="/faqs" element={<Page title="FAQs" />} />
         <Route path="/about" element={<Page title="About Us" />} />
-        <Route path="/click-and-collect" element={<Page title="How Click & Collect Works" />} />
-        <Route path="/refund-policy" element={<Page title="Order Cancellation and Refund Policy" />} />
+        <Route
+          path="/click-and-collect"
+          element={<Page title="How Click & Collect Works" />}
+        />
+        <Route
+          path="/refund-policy"
+          element={<Page title="Order Cancellation and Refund Policy" />}
+        />
         <Route path="/terms" element={<Page title="Terms & Conditions" />} />
         <Route path="/privacy" element={<Page title="Privacy Policy" />} />
         <Route path="/cart" element={<Page title="Cart" />} />
         <Route path="/search" element={<Search />} />
       </Route>
+
       <Route path="/login" element={<UserLogin registerTo="/register" />} />
       <Route path="/register" element={<UserRegister />} />
     </Routes>

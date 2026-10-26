@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Link, NavLink } from "react-router";
+import { useEffect, useRef, useState } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router";
+import { useAuth } from "../context/AuthContext";
 import logo from "../assets/images/logo-header.png";
 import "../assets/styles/navbar.css";
 
@@ -25,8 +26,8 @@ function BasketIcon() {
     <svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor"
          strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M8 9V6a1.5 1.5 0 0 1 1.5-1.5h5A1.5 1.5 0 0 1 16 6v3" />
-      <path d="M3 9h18l-1.6 10a1.5 1.5 0 0 1-1.5 1.3H6.100a1.500 1.500 0 0 1-1.500-1.300L3 9z" />
-      <path d="M9 12.500v5M12 12.500v5M15 12.500v5" />
+      <path d="M3 9h18l-1.6 10a1.5 1.5 0 0 1-1.5 1.3H6.1a1.5 1.5 0 0 1-1.5-1.3L3 9z" />
+      <path d="M9 12.5v5M12 12.5v5M15 12.5v5" />
     </svg>
   );
 }
@@ -36,13 +37,67 @@ function BasketIcon() {
  *
  * Props (all optional):
  *  - cartCount: number shown as a badge on the basket
- *  - user: { name } when logged in (button becomes "Logout")
  *  - onSearch: called when the search icon is clicked
- *  - onLogin / onLogout: auth handlers
+ *
+ * Auth state comes from useAuth(), so this must render inside <AuthProvider>.
  */
-export default function Header({ cartCount = 0, user = null, onSearch, onLogin, onLogout }) {
-  const [menuOpen, setMenuOpen] = useState(false);
+
+function getInitials(name) {
+  const parts = (name || "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+  return (
+    parts[0].charAt(0) + parts[parts.length - 1].charAt(0)
+  ).toUpperCase();
+}
+
+export default function Header({ cartCount = 0, onSearch }) {
+  const { user, loading, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [menuOpen, setMenuOpen] = useState(false);       // mobile nav
+  const [userMenuOpen, setUserMenuOpen] = useState(false); // account dropdown
+  const userMenuRef = useRef(null);
+
   const closeMenu = () => setMenuOpen(false);
+  const closeUserMenu = () => setUserMenuOpen(false);
+
+  const initials = getInitials(user?.name);
+
+  // Close the dropdown when the page changes
+  useEffect(() => {
+    setUserMenuOpen(false);
+  }, [location.pathname]);
+
+  // Close the dropdown on outside click or Escape
+  useEffect(() => {
+    if (!userMenuOpen) return;
+
+    function handleClick(event) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setUserMenuOpen(false);
+      }
+    }
+    function handleKey(event) {
+      if (event.key === "Escape") setUserMenuOpen(false);
+    }
+
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [userMenuOpen]);
+
+  async function handleLogout() {
+    closeUserMenu();
+    await logout();
+    navigate("/");
+  }
+
+ 
 
   return (
     <header className="site-header">
@@ -80,15 +135,63 @@ export default function Header({ cartCount = 0, user = null, onSearch, onLogin, 
             <SearchIcon />
           </button>
 
-          <Link to="/cart" className="icon-btn" aria-label={`Basket, ${cartCount} items`}>
+          <Link
+            to="/cart"
+            className="icon-btn"
+            aria-label={
+              cartCount === null
+                ? "Basket, item count unavailable"
+                : `Basket, ${cartCount} items`
+            }
+          >
             <BasketIcon />
             {cartCount > 0 && <span className="icon-btn__badge">{cartCount}</span>}
           </Link>
 
-          {user ? (
-            <button className="btn-login" onClick={onLogout}>Logout</button>
+          {loading ? (
+            // Reserve the space so the header doesn't jump while /me is loading
+            <span className="user-menu__placeholder" aria-hidden="true" />
+          ) : user ? (
+            <div className="user-menu" ref={userMenuRef}>
+              <button
+                type="button"
+                className="user-menu__avatar"
+                aria-label={`Account menu for ${user.name}`}
+                aria-haspopup="menu"
+                aria-expanded={userMenuOpen}
+                onClick={() => setUserMenuOpen((o) => !o)}
+              >
+                {initials}
+              </button>
+
+              {userMenuOpen && (
+                <div className="user-menu__dropdown" role="menu">
+                  <div className="user-menu__header">
+                    <strong>{user.name}</strong>
+                    <span>{user.email}</span>
+                  </div>
+
+                  <Link to="/account" role="menuitem" className="user-menu__item" onClick={closeUserMenu}>
+                    Account
+                  </Link>
+                  <Link to="/settings" role="menuitem" className="user-menu__item" onClick={closeUserMenu}>
+                    Settings
+                  </Link>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className="user-menu__item user-menu__item--logout"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
-            <button className="btn-login" onClick={onLogin}>Login</button>
+            <button className="btn-login" onClick={() => navigate("/login")}>
+              Login
+            </button>
           )}
         </div>
       </div>
