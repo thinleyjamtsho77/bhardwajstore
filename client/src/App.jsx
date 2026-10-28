@@ -6,7 +6,6 @@ import UserLogin from "./pages/user-login-page";
 import UserRegister from "./pages/user-register";
 import AdminCategoriesPage from "./pages/AdminCategoriesPage";
 import AdminCategoriesPreview from "./pages/admin/AdminCategoriesPreview";
-import Page from "./components/PlaceholderPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import UserProfilePreview from "./pages/UserProfilePreview";
 
