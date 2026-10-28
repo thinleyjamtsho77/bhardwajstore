@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Logo from "../assets/images/logo-header.png";
 import RegisterImage from "../assets/images/login_image.png";
-import "../assets/styles/Login.css";    
-import "../assets/styles/register.css"; 
+import "../assets/styles/Login.css";
+import "../assets/styles/register.css";
 
 const MIN_PASSWORD_LENGTH = 8;
+const MAX_PASSWORD_LENGTH = 72;
 
 function GoogleIcon() {
   return (
@@ -36,20 +37,33 @@ function EyeIcon({ visible }) {
   );
 }
 
-/**
- * Optional integration props:
- * onRegister({ name, email, password }): async callback that calls Express and navigates on success.
- * onGoogleSignup / onAppleSignup: real provider callbacks.
- * guestTo / loginTo / termsTo: routes used by the links on the page.
- */
+// Calls the Express API. Throws an Error with a readable message on failure.
+async function registerUser({ name, email, password }) {
+  let res;
+  try {
+    res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+  } catch {
+    throw new Error("Could not reach the server. Please try again.");
+  }
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || "Registration failed.");
+  return data;
+}
+
 export default function Register({
   guestTo = "/",
   loginTo = "/login",
   termsTo = "/terms",
-  onRegister,
   onGoogleSignup,
   onAppleSignup,
 }) {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
   const [accepted, setAccepted] = useState(false);
   const [show, setShow] = useState({ password: false, confirm: false });
@@ -65,8 +79,11 @@ export default function Register({
 
   function validate() {
     if (!form.name.trim()) return "Enter your name.";
+    if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) return "Enter a valid email address.";
     if (form.password.length < MIN_PASSWORD_LENGTH)
       return `Use a password with at least ${MIN_PASSWORD_LENGTH} characters.`;
+    if (form.password.length > MAX_PASSWORD_LENGTH)
+      return `Use a password with no more than ${MAX_PASSWORD_LENGTH} characters.`;
     if (form.password !== form.confirm) return "The two passwords don’t match.";
     if (!accepted) return "Accept the Terms and Conditions to create your account.";
     return null;
@@ -81,17 +98,17 @@ export default function Register({
       setNotice({ type: "error", text: problem });
       return;
     }
-    if (!onRegister) {
-      showUnavailable("Account creation");
-      return;
-    }
 
     setPending(true);
     try {
-      await onRegister({ name: form.name.trim(), email: form.email.trim(), password: form.password });
+      await registerUser({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        password: form.password,
+      });
+      navigate(loginTo, { state: { registered: true } });
     } catch (err) {
       setNotice({ type: "error", text: err?.message || "We couldn’t create your account. Please try again." });
-    } finally {
       setPending(false);
     }
   }
@@ -153,6 +170,7 @@ export default function Register({
                   autoComplete="name"
                   value={form.name}
                   onChange={setField("name")}
+                  maxLength={100}
                   required
                   disabled={pending}
                 />
@@ -167,6 +185,7 @@ export default function Register({
                   autoComplete="email"
                   value={form.email}
                   onChange={setField("email")}
+                  maxLength={100}
                   required
                   disabled={pending}
                 />
@@ -182,6 +201,7 @@ export default function Register({
                     autoComplete="new-password"
                     value={form.password}
                     onChange={setField("password")}
+                    maxLength={MAX_PASSWORD_LENGTH}
                     required
                     disabled={pending}
                   />
@@ -208,6 +228,7 @@ export default function Register({
                     autoComplete="new-password"
                     value={form.confirm}
                     onChange={setField("confirm")}
+                    maxLength={MAX_PASSWORD_LENGTH}
                     required
                     disabled={pending}
                   />
