@@ -9,7 +9,9 @@ router.get("/", async (req, res) => {
     const [categories] = await pool.query(`
       SELECT
         category_id AS id,
-        category_name AS name
+        category_name AS name,
+        description,
+        image_url AS image
       FROM categories
       WHERE is_active = 1
       ORDER BY category_id

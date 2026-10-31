@@ -1,23 +1,29 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { useAuth } from "../context/AuthContext";
 import "../assets/styles/index.css";
 import "../assets/styles/cart.css";
 
-// Placeholder items until the cart API exists.
-// Images live in client/public/images/products/ and are referenced by URL.
-const INITIAL_ITEMS = [
-  { id: 1, name: "Basmati Rice", size: "25 kg bag", unitPrice: 1850, qty: 1, image: "/images/products/basmati-rice.png" },
-  { id: 2, name: "Garam Masala", size: "1 kg pack", unitPrice: 300, qty: 2, image: "/images/products/garam-masala.png" },
-  { id: 3, name: "Chickpeas", size: "500 g pack", unitPrice: 150, qty: 1, image: "/images/products/chickpeas.png" },
-  { id: 4, name: "Brown Sugar", size: "1 kg bag", unitPrice: 100, qty: 4, image: "/images/products/brown-sugar.png" },
-  { id: 5, name: "Organic Lentils", size: "1 kg pack", unitPrice: 225, qty: 2, image: "/images/products/lentils.png" },
-];
-
-const GST_RATE = 0; // set to e.g. 0.05 when GST applies
 const MAX_QTY = 99;
 
 const money = (n) =>
-  "₹ " + n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  n.toLocaleString("en-IN", { style: "currency", currency: "INR" });
+
+// Calls the Express API and returns parsed JSON. Throws Error with a readable message.
+async function api(path, options = {}) {
+  let res;
+  try {
+    res = await fetch(`/api/cart${path}`, {
+      ...options,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch {
+    throw new Error("Could not reach the server. Please try again.");
+  }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || "Something went wrong.");
+  return data;
+}
 
 function TrashIcon() {
   return (
@@ -30,30 +36,54 @@ function TrashIcon() {
 
 export default function Cart() {
   const navigate = useNavigate();
-  const [items, setItems] = useState(INITIAL_ITEMS);
+  const { user, loading: authLoading } = useAuth();
+
+  const [cart, setCart] = useState(null); // null until the first load finishes
+  const [error, setError] = useState("");
+  const [busyId, setBusyId] = useState(null); // productId currently being changed
   const [promo, setPromo] = useState("");
   const [promoNotice, setPromoNotice] = useState(null);
 
-  const itemCount = items.reduce((sum, i) => sum + i.qty, 0);
+  // Load the cart once we know who is signed in
+  useEffect(() => {
+    if (authLoading || !user) return;
+    let ignore = false;
 
-  const totals = useMemo(() => {
-    const subtotal = items.reduce((sum, i) => sum + i.unitPrice * i.qty, 0);
-    const discount = 0; // applied once promo codes are supported by the server
-    const gst = (subtotal - discount) * GST_RATE;
-    return { subtotal, discount, gst, total: subtotal - discount + gst };
-  }, [items]);
+    api("")
+      .then((data) => {
+        if (!ignore) setCart(data);
+      })
+      .catch((err) => {
+        if (!ignore) setError(err.message);
+      });
 
-  function changeQty(id, delta) {
-    setItems((list) =>
-      list.map((i) =>
-        i.id === id ? { ...i, qty: Math.min(MAX_QTY, Math.max(1, i.qty + delta)) } : i
-      )
+    return () => {
+      ignore = true;
+    };
+  }, [authLoading, user]);
+
+  const change = useCallback(async (productId, request) => {
+    setError("");
+    setBusyId(productId);
+    try {
+      setCart(await request());
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusyId(null);
+    }
+  }, []);
+
+  const changeQty = (item, delta) => {
+    const quantity = Math.min(MAX_QTY, Math.max(1, item.quantity + delta));
+    if (quantity === item.quantity) return;
+    change(item.productId, () =>
+      api(`/items/${item.productId}`, { method: "PATCH", body: JSON.stringify({ quantity }) })
     );
-  }
+  };
 
-  function removeItem(id) {
-    setItems((list) => list.filter((i) => i.id !== id));
-  }
+  const removeItem = (item) =>
+    change(item.productId, () => api(`/items/${item.productId}`, { method: "DELETE" }));
 
   function applyPromo(event) {
     event.preventDefault();
@@ -64,13 +94,60 @@ export default function Cart() {
     setPromoNotice({ type: "info", text: "Promo codes aren't available yet." });
   }
 
+  const breadcrumb = (
+    <nav className="cart-breadcrumb" aria-label="Breadcrumb">
+      <Link to="/">Home</Link>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Cart</span>
+    </nav>
+  );
+
+  // Waiting for /me or for the first cart response
+  if (authLoading || (user && !cart && !error)) {
+    return (
+      <main className="cart-page">
+        {breadcrumb}
+        <p className="cart-empty" role="status">Loading your cart…</p>
+      </main>
+    );
+  }
+
+  // Carts belong to accounts, so guests are asked to sign in
+  if (!user) {
+    return (
+      <main className="cart-page">
+        {breadcrumb}
+        <section className="cart-empty">
+          <h1>Sign in to view your cart</h1>
+          <p>Your cart is saved to your account.</p>
+          <Link to="/login" state={{ from: { pathname: "/cart" } }} className="cart-btn">
+            Log in
+          </Link>
+        </section>
+      </main>
+    );
+  }
+
+  // First load failed
+  if (!cart) {
+    return (
+      <main className="cart-page">
+        {breadcrumb}
+        <section className="cart-empty">
+          <h1>We couldn’t load your cart</h1>
+          <p role="alert">{error}</p>
+          <button type="button" className="cart-btn" onClick={() => window.location.reload()}>
+            Try again
+          </button>
+        </section>
+      </main>
+    );
+  }
+  const { items = [], itemCount = 0, totals } = cart ?? {};
+
   return (
     <main className="cart-page">
-      <nav className="cart-breadcrumb" aria-label="Breadcrumb">
-        <Link to="/">Home</Link>
-        <span aria-hidden="true">›</span>
-        <span aria-current="page">Cart</span>
-      </nav>
+      {breadcrumb}
 
       {items.length === 0 ? (
         <section className="cart-empty">
@@ -85,48 +162,59 @@ export default function Cart() {
               Cart <span>({itemCount} {itemCount === 1 ? "item" : "items"})</span>
             </h1>
 
+            {error && <p className="cart-notice cart-notice--error" role="alert">{error}</p>}
+
             <ul className="cart-list">
-              {items.map((item) => (
-                <li key={item.id} className="cart-item">
-                  <img className="cart-item__img" src={item.image} alt="" />
+              {items.map((item) => {
+                const busy = busyId === item.productId;
+                const maxQty = Math.min(MAX_QTY, item.available ?? MAX_QTY);
+                return (
+                  <li key={item.productId} className="cart-item" aria-busy={busy}>
+                    {item.image ? (
+                      <img className="cart-item__img" src={item.image} alt="" />
+                    ) : (
+                      <div className="cart-item__img" aria-hidden="true" />
+                    )}
 
-                  <div className="cart-item__info">
-                    <h2>{item.name}</h2>
-                    <p>{item.size}</p>
-                  </div>
+                    <div className="cart-item__info">
+                      <h2>{item.name}</h2>
+                      {item.size && <p>{item.size}</p>}
+                    </div>
 
-                  <div className="cart-qty" role="group" aria-label={`Quantity for ${item.name}`}>
+                    <div className="cart-qty" role="group" aria-label={`Quantity for ${item.name}`}>
+                      <button
+                        type="button"
+                        aria-label={`Decrease quantity of ${item.name}`}
+                        onClick={() => changeQty(item, -1)}
+                        disabled={busy || item.quantity <= 1}
+                      >
+                        −
+                      </button>
+                      <output aria-live="polite">{item.quantity}</output>
+                      <button
+                        type="button"
+                        aria-label={`Increase quantity of ${item.name}`}
+                        onClick={() => changeQty(item, 1)}
+                        disabled={busy || item.quantity >= maxQty}
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <p className="cart-item__price">{money(item.lineTotal)}</p>
+
                     <button
                       type="button"
-                      aria-label={`Decrease quantity of ${item.name}`}
-                      onClick={() => changeQty(item.id, -1)}
-                      disabled={item.qty <= 1}
+                      className="cart-item__remove"
+                      aria-label={`Remove ${item.name} from cart`}
+                      onClick={() => removeItem(item)}
+                      disabled={busy}
                     >
-                      −
+                      <TrashIcon />
                     </button>
-                    <output aria-live="polite">{item.qty}</output>
-                    <button
-                      type="button"
-                      aria-label={`Increase quantity of ${item.name}`}
-                      onClick={() => changeQty(item.id, 1)}
-                      disabled={item.qty >= MAX_QTY}
-                    >
-                      +
-                    </button>
-                  </div>
-
-                  <p className="cart-item__price">{money(item.unitPrice * item.qty)}</p>
-
-                  <button
-                    type="button"
-                    className="cart-item__remove"
-                    aria-label={`Remove ${item.name} from cart`}
-                    onClick={() => removeItem(item.id)}
-                  >
-                    <TrashIcon />
-                  </button>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           </section>
 
