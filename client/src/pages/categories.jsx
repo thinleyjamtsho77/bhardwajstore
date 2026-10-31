@@ -93,7 +93,7 @@ function Categories() {
     productResult.categoryId !== selectedCategory.id
 
   return (
-    <main>
+    <main className="store-categories">
       <h1>Bhardwaj Store — Categories</h1>
 
       {categoriesLoading && (
