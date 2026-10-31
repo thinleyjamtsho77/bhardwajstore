@@ -81,7 +81,13 @@
   row-gap: 16px;
 }
 .pay-grid__cell { display: flex; align-items: center; justify-content: center; height: 62px; }
-.pay-grid__cell img { max-width: 100%; height: auto; display: block; }
+.pay-grid__cell img { max-width: 65%; height: auto; display: block; }
+.pay-grid__cell svg {
+  max-width: 100%;
+  height: auto;
+  width: auto;
+  display: block;
+}
 
 .site-footer a:focus-visible {
   outline: 2px solid #fff;
