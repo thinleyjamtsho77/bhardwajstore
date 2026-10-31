@@ -76,7 +76,6 @@ DROP TABLE IF EXISTS `categories`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `categories` (
   `category_id` int unsigned NOT NULL AUTO_INCREMENT,
-  `parent_category_id` int unsigned DEFAULT NULL,
   `category_name` varchar(100) NOT NULL,
   `description` text,
   `image_url` varchar(500) DEFAULT NULL,
@@ -85,9 +84,7 @@ CREATE TABLE `categories` (
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`category_id`),
   UNIQUE KEY `category_name` (`category_name`),
-  KEY `idx_categories_parent` (`parent_category_id`),
-  KEY `idx_categories_active` (`is_active`),
-  CONSTRAINT `fk_categories_parent` FOREIGN KEY (`parent_category_id`) REFERENCES `categories` (`category_id`) ON DELETE SET NULL ON UPDATE CASCADE
+  KEY `idx_categories_active` (`is_active`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

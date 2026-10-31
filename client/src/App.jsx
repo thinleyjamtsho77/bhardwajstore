@@ -2,13 +2,13 @@ import { Routes, Route } from "react-router";
 import MainLayout from "./components/main-layout";
 import Page from "./components/PlaceholderPage";
 import Home from "./pages/HomePage";
-import Cart from "./pages/CartPage";
+import Cart from "./pages/cartPage";
 import UserLogin from "./pages/UserLogin";
 import UserRegister from "./pages/UserRegistration";
 import AdminCategoriesPage from "./pages/admin/AdminCategories";
 import AdminCategoriesPreview from "./pages/admin/AdminCategoriesPreview";
-import CategoriesPage from "./pages/CategoriesPage";
-import UserProfilePreview from "./pages/UserProfilePreview";
+import CategoriesPage from "./pages/categories_new";
+import UserProfilePreview from "./pages/UserProfile";
 import SearchResults from "./pages/search";
 
 export default function App() {

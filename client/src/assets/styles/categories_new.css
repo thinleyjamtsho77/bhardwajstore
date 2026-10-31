@@ -1,0 +1,211 @@
+.categories-page {
+  --cat-green: #2f7d32;
+  --cat-green-dark: #1f5c27;
+  --cat-green-tint: #eef5ec;
+  --cat-ink: #1d2a1f;
+  --cat-muted: #5b6b5d;
+  --cat-card: #ffffff;
+  --cat-radius: 24px;
+
+  background: #ffffff;
+  color: var(--cat-ink);
+  padding: 48px clamp(16px, 5vw, 80px) 72px;
+  min-height: 60vh;
+}
+
+/* ---------- Breadcrumb ---------- */
+
+.categories-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 1100px;
+  margin: 0 auto 24px;
+  font-size: 0.875rem;
+  color: var(--cat-muted);
+}
+
+.categories-breadcrumb a {
+  color: var(--cat-muted);
+  text-decoration: none;
+}
+
+.categories-breadcrumb a:hover {
+  color: var(--cat-green);
+  text-decoration: underline;
+}
+
+.categories-breadcrumb a:focus-visible {
+  outline: 2px solid var(--cat-green);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.categories-breadcrumb [aria-current='page'] {
+  color: var(--cat-ink);
+  font-weight: 500;
+}
+
+.categories-page__title {
+  margin: 0 0 32px;
+  text-align: center;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--cat-green-dark);
+}
+
+.categories-page__message {
+  margin: 16px 0;
+  text-align: center;
+  color: var(--cat-muted);
+}
+
+/* ---------- Category grid ---------- */
+
+.category-grid {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 1100px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 24px;
+}
+
+.category-grid > li {
+  display: flex;
+}
+
+/* ---------- Category card ---------- */
+
+.category-card {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  min-height: 180px;
+  background: var(--cat-card);
+  border-radius: var(--cat-radius);
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(31, 92, 39, 0.1), 0 8px 24px rgba(31, 92, 39, 0.1);
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  transition: box-shadow 0.15s ease, outline-color 0.15s ease;
+}
+
+.category-card:hover {
+  box-shadow: 0 0 0 1px rgba(31, 92, 39, 0.16), 0 12px 28px rgba(31, 92, 39, 0.16);
+}
+
+/* Show the focus ring around the whole card */
+.category-card:has(.category-card__cta:focus-visible) {
+  outline-color: var(--cat-green);
+}
+
+.category-card__media {
+  flex: 0 0 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f6f9f4;
+}
+
+.category-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.category-card__placeholder {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: #dcebd8;
+  color: var(--cat-green-dark);
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.category-card__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px 20px 20px 24px;
+}
+
+.category-card__name {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--cat-ink);
+}
+
+.category-card__description {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--cat-muted);
+  max-width: 28ch;
+}
+
+/* "Explore now" link. Its ::after stretches over the whole card so the
+   entire card is clickable. */
+.category-card__cta {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 4px 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--cat-green);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.category-card__cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--cat-radius);
+}
+
+.category-card__cta:focus-visible {
+  outline: none;
+}
+
+.category-card__chevron {
+  transition: transform 0.15s ease;
+}
+
+.category-card:hover .category-card__chevron {
+  transform: translateX(3px);
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 420px) {
+  .category-card__media {
+    flex-basis: 36%;
+  }
+
+  .category-card__body {
+    padding: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-card,
+  .category-card__chevron {
+    transition: none;
+  }
+}

@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import Categories from "./categories";
+import Categories from "./categories_new";
 
 export default function CategoriesPage() {
   return (

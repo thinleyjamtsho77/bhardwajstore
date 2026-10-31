@@ -175,7 +175,7 @@ export default function Header({ cartCount = 0, onSearch }) {
                     <span>{user.email}</span>
                   </div>
 
-                  <Link to="/account" role="menuitem" className="user-menu__item" onClick={closeUserMenu}>
+                  <Link to="/profile-preview" role="menuitem" className="user-menu__item" onClick={closeUserMenu}>
                     Account
                   </Link>
                   <Link to="/settings" role="menuitem" className="user-menu__item" onClick={closeUserMenu}>
