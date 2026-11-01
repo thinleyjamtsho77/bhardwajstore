@@ -12,6 +12,7 @@ import UserProfilePreview from "./pages/UserProfile";
 import SearchResults from "./pages/search";
 import AllProducts from "./pages/AllProducts";
 
+import OrderHistory from "./pages/OrderHistory"
 
 export default function App() {
   return (
@@ -52,6 +53,7 @@ export default function App() {
           element={<Page title="Privacy Policy" />}
         />
         <Route path="/search" element={<SearchResults />} />
+        <Route path="/order-history" element={<OrderHistory />} />
       </Route>
 
       <Route
