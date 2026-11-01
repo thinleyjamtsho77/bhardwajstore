@@ -1,0 +1,260 @@
+
+/* Main Page Layout */
+.order-history-page {
+  width: 100%;
+  min-height: 500px;
+  display: flex;
+  align-items: stretch;
+  background-color: #ffffff;
+}
+
+/* Account Sidebar */
+.account-sidebar {
+  width: 21%;
+  min-width: 162px;
+  max-width: 260px;
+  flex-shrink: 0;
+  background-color: #194a25;
+  color: #ffffff;
+  padding: 45px 26px 30px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+}
+
+.account-sidebar h2 {
+  font-size: 21px;
+  margin: 0 0 25px;
+  padding: 0;
+  border: none;
+}
+
+.account-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.account-menu-item {
+  display: block;
+  background-color: #ffffff;
+  color: #222222;
+  text-decoration: none;
+  padding: 9px 12px;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.account-menu-item:hover,
+.account-menu-item.active {
+  background-color: #dcebdc;
+  color: #194a25;
+}
+
+.account-sidebar-bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+.account-bottom-item {
+  display: block;
+  color: #ffffff;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease,
+              color 0.2s ease;
+}
+
+.account-bottom-item:hover {
+  background-color: #477b51;
+  color: #ffffff;
+}
+
+/* Right Content Area */
+.order-content-area {
+  flex: 1;
+  min-width: 0;
+  padding: 20px 30px 40px;
+  box-sizing: border-box;
+}
+
+/* Breadcrumb */
+.order-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 12px 0;
+  margin-left: 24px;
+  font-size: 14px;
+}
+
+.order-breadcrumb a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.order-breadcrumb a:hover {
+  color: var(--cat-green);
+  text-decoration: underline;
+}
+
+/* Main Content */
+.order-main-content {
+  width: 100%;
+}
+
+.order-main-content h1 {
+  font-size: 26px;
+  color: #222222;
+  margin: 0 0 30px;
+}
+
+/* Filter */
+.order-filter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.order-filter label {
+  font-size: 14px;
+  color: #333333;
+}
+
+.order-filter select {
+  padding: 5px 10px;
+  min-width: 150px;
+  border: 1px solid #999999;
+  border-radius: 4px;
+  background-color: #ffffff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* Order Table */
+.order-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #aab5aa;
+  border-radius: 6px;
+}
+
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.order-table th {
+  background-color: #194a25;
+  color: #ffffff;
+  padding: 12px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.order-table td {
+  padding: 10px;
+  border-bottom: 1px solid #cccccc;
+  font-size: 13px;
+  color: #333333;
+  white-space: nowrap;
+}
+
+.order-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.order-table tbody tr:hover {
+  background-color: #f7faf7;
+}
+
+.no-orders {
+  text-align: center;
+  padding: 35px 15px !important;
+  color: #777777 !important;
+  font-size: 14px;
+}
+
+/* Order Status */
+.order-status {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.order-status.delivered {
+  background-color: #e4f3e6;
+  color: #24733a;
+}
+
+.order-status.processing {
+  background-color: #fff2d6;
+  color: #a66b00;
+}
+
+.order-status.cancelled {
+  background-color: #fde7e7;
+  color: #c0392b;
+}
+
+/* View Button */
+.order-view-button {
+  background-color: #ffffff;
+  color: #194a25;
+  border: 1px solid #194a25;
+  border-radius: 7px;
+  padding: 6px 18px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.order-view-button:hover {
+  background-color: #194a25;
+  color: #ffffff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .order-history-page {
+    flex-direction: column;
+  }
+
+  .account-sidebar {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    padding: 20px;
+  }
+
+  .account-sidebar-bottom {
+    margin-top: 20px;
+  }
+
+  .order-content-area {
+    padding: 20px;
+  }
+
+  .order-filter {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}

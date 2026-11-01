@@ -11,6 +11,8 @@ import CategoriesPage from "./pages/categories_new";
 import CategoryProductsPage from "./pages/CategoryProductsPage";
 import UserProfilePreview from "./pages/UserProfile";
 import SearchResults from "./pages/search";
+import AllProducts from "./pages/AllProducts";
+import OrderHistory from "./pages/OrderHistory";
 
 export default function App() {
   return (
@@ -34,11 +36,13 @@ export default function App() {
         />
 
         <Route path="/cart" element={<Cart />} />
+        <Route path="/profile" element={<UserProfilePreview />} />
         <Route
           path="/profile-preview"
           element={<UserProfilePreview />}
         />
         <Route path="/search" element={<SearchResults />} />
+        <Route path="/order-history" element={<OrderHistory />} />
 
         <Route path="/deals" element={<Page title="Deals" />} />
         <Route path="/faqs" element={<Page title="FAQs" />} />
@@ -66,6 +70,7 @@ export default function App() {
         element={<UserLogin registerTo="/register" />}
       />
       <Route path="/register" element={<UserRegister />} />
+      <Route path="/all-products" element={<AllProducts />} />
     </Routes>
   );
 }

@@ -4,7 +4,7 @@ const MAX_QTY = 99;
 const GST_RATE = 0; 
 
 
-const toPaise = (value) => Math.round(Number(value) * 100);
+const toAmount = (value) => Math.round(Number(value) * 100);
 
 function parseId(value) {
   const s = String(value);
@@ -55,11 +55,11 @@ async function loadCart(userId) {
     [cartId]
   );
 
-  let subtotalPaise = 0;
+  let subtotalAmount = 0;
   const items = rows.map((r) => {
-    const unitPaise = toPaise(r.price);
-    const linePaise = unitPaise * r.quantity;
-    subtotalPaise += linePaise;
+    const unitAmount = toAmount(r.price);
+    const lineAmount = unitAmount * r.quantity;
+    subtotalAmount += lineAmount;
     return {
       productId: r.productId,
       name: r.name,
@@ -67,22 +67,22 @@ async function loadCart(userId) {
       image: r.image,
       quantity: r.quantity,
       available: r.available == null ? null : Number(r.available),
-      unitPrice: unitPaise / 100,
-      lineTotal: linePaise / 100,
+      unitPrice: unitAmount / 100,
+      lineTotal: lineAmount / 100,
     };
   });
 
-  const discountPaise = 0; // applied once promo codes exist
-  const gstPaise = Math.round((subtotalPaise - discountPaise) * GST_RATE);
+  const discountAmount = 0; // applied once promo codes exist
+  const gstAmount = Math.round((subtotalAmount - discountAmount) * GST_RATE);
 
   return {
     items,
     itemCount: items.length,
     totals: {
-      subtotal: subtotalPaise / 100,
-      discount: discountPaise / 100,
-      gst: gstPaise / 100,
-      total: (subtotalPaise - discountPaise + gstPaise) / 100,
+      subtotal: subtotalAmount / 100,
+      discount: discountAmount / 100,
+      gst: gstAmount / 100,
+      total: (subtotalAmount - discountAmount + gstAmount) / 100,
     },
   };
 }
