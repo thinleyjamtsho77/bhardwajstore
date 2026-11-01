@@ -152,3 +152,64 @@ export function logout(req, res) {
   res.clearCookie("token", cookieOptions);
   res.json({ message: "Logged out" });
 }
+export async function updateMe(req, res) {
+  const body = req.body ?? {};
+  const updates = [];
+  const values = [];
+
+  if (Object.hasOwn(body, "name")) {
+    if (
+      typeof body.name !== "string" ||
+      !body.name.trim() ||
+      body.name.trim().length > 100
+    ) {
+      return res.status(400).json({
+        message: "Name must be 1 to 100 characters",
+      });
+    }
+
+    updates.push("name = ?");
+    values.push(body.name.trim());
+  }
+
+  if (Object.hasOwn(body, "phone")) {
+    if (body.phone !== null && typeof body.phone !== "string") {
+      return res.status(400).json({
+        message: "Invalid phone number",
+      });
+    }
+
+    const phone = body.phone?.trim() || null;
+
+    if (phone && !/^\+?[0-9\s-]{6,20}$/.test(phone)) {
+      return res.status(400).json({
+        message: "Invalid phone number",
+      });
+    }
+
+    updates.push("phone = ?");
+    values.push(phone);
+  }
+
+  if (updates.length === 0) {
+    return res.status(400).json({
+      message: "Provide a name or phone number to update",
+    });
+  }
+
+  try {
+    await pool.execute(
+      `UPDATE users
+       SET ${updates.join(", ")}
+       WHERE user_id = ? AND account_status = 'active'`,
+      [...values, req.user.id]
+    );
+
+    return me(req, res);
+  } catch (error) {
+    console.error("Update profile failed:", error.code || error.message);
+    return res.status(500).json({
+      message: "Unable to update profile",
+    });
+  }
+}
