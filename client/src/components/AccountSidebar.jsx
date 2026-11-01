@@ -30,7 +30,7 @@ export default function AccountSidebar() {
         ))}
       </nav>
 
-      <div className="account-sidebar-bottom">
+      {/* <div className="account-sidebar-bottom">
         <NavLink to="/settings" className="account-bottom-item">
           ⚙ Setting
         </NavLink>
@@ -41,7 +41,7 @@ export default function AccountSidebar() {
         >
           ⇥ Log Out
         </button>
-      </div>
+      </div> */}
 
     </aside>
   );
