@@ -22,13 +22,33 @@ const PAGE_SIZE = 6;
 
 export default function SearchResults() {
   const [search, setSearch] = useState("");
+  const [submittedSearch, setSubmittedSearch] = useState("");
   const [sortBy, setSortBy] = useState("low-to-high");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategories, setSelectedCategories] = useState({});
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+  const suggestions = search.trim()
+    ? sampleProducts
+      .filter((product) =>
+        product.name.toLowerCase().includes(search.trim().toLowerCase())
+      )
+      .slice(0, 5)
+    : [];
+
+  function handleSearch(event) {
+    event.preventDefault();
+    setSubmittedSearch(search);
+    setCurrentPage(1);
+  }
+
+  function handleSuggestionClick(productName) {
+    setSearch(productName);
+  }
 
   const filteredProducts = sampleProducts
     .filter((product) =>
-      product.name.toLowerCase().includes(search.trim().toLowerCase())
+      product.name.toLowerCase().includes(submittedSearch.trim().toLowerCase())
     )
     .filter((product) => {
       // Preserve the existing category-filter behavior.
@@ -104,17 +124,34 @@ export default function SearchResults() {
       </aside>
 
       <section className="search-content">
-        <form
-          className="search-controls"
-          onSubmit={(event) => event.preventDefault()}
-        >
-          <input
-            type="search"
-            placeholder="Search product"
-            aria-label="Search product"
-            value={search}
-            onChange={(event) => updateSearch(event.target.value)}
-          />
+        <form className="search-controls" onSubmit={handleSearch}>
+          <div className="search-input-wrapper">
+            <input
+              type="search"
+              placeholder="Search product"
+              aria-label="Search product"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
+            />
+
+            {isSearchFocused && suggestions.length > 0 && (
+              <ul className="search-suggestions">
+                {suggestions.map((product) => (
+                  <li key={product.id}>
+                    <button
+                      type="button"
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => handleSuggestionClick(product.name)}
+                    >
+                      {product.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
           <button type="submit" className="search-button">
             Search
