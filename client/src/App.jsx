@@ -10,6 +10,8 @@ import AdminCategoriesPreview from "./pages/admin/AdminCategoriesPreview";
 import CategoriesPage from "./pages/categories_new";
 import UserProfilePreview from "./pages/UserProfile";
 import SearchResults from "./pages/search";
+import AllProducts from "./pages/AllProducts";
+
 
 export default function App() {
   return (
@@ -57,6 +59,7 @@ export default function App() {
         element={<UserLogin registerTo="/register" />}
       />
       <Route path="/register" element={<UserRegister />} />
+      <Route path="/all-products" element={<AllProducts />} />
     </Routes>
   );
 }
