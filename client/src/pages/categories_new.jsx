@@ -21,12 +21,11 @@ function ChevronIcon() {
   )
 }
 
-function Categories() {
+export default function Categories() {
   const [categories, setCategories] = useState([])
-  const [categoriesLoading, setCategoriesLoading] = useState(true)
-  const [categoriesError, setCategoriesError] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
-  // Load categories when the page opens.
   useEffect(() => {
     const controller = new AbortController()
 
@@ -41,14 +40,21 @@ function Categories() {
         }
 
         const data = await response.json()
-        setCategories(data)
+
+        if (!Array.isArray(data)) {
+          throw new Error('Unexpected category response')
+        }
+
+        if (!controller.signal.aborted) {
+          setCategories(data)
+        }
       } catch (error) {
         if (!controller.signal.aborted) {
-          setCategoriesError(error.message)
+          setError(error.message)
         }
       } finally {
         if (!controller.signal.aborted) {
-          setCategoriesLoading(false)
+          setLoading(false)
         }
       }
     }
@@ -58,39 +64,33 @@ function Categories() {
     return () => controller.abort()
   }, [])
 
-  const breadcrumb = (
-    <nav className="categories-breadcrumb" aria-label="Breadcrumb">
-      <Link to="/">Home</Link>
-      <span aria-hidden="true">›</span>
-      <span aria-current="page">Categories</span>
-    </nav>
-  )
-
   return (
     <main className="categories-page">
-      {breadcrumb}
+      <nav className="categories-breadcrumb" aria-label="Breadcrumb">
+        <Link to="/">Home</Link>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">Categories</span>
+      </nav>
 
       <h1 className="categories-page__title">Shop by category</h1>
 
-      {categoriesLoading && (
+      {loading && (
         <p role="status" className="categories-page__message">
           Loading categories...
         </p>
       )}
 
-      {categoriesError && (
+      {error && (
         <p role="alert" className="categories-page__message">
-          {categoriesError}. Please refresh to try again.
+          {error}. Please refresh to try again.
         </p>
       )}
 
-      {!categoriesLoading &&
-        !categoriesError &&
-        categories.length === 0 && (
-          <p className="categories-page__message">
-            No categories available.
-          </p>
-        )}
+      {!loading && !error && categories.length === 0 && (
+        <p className="categories-page__message">
+          No categories available.
+        </p>
+      )}
 
       <ul className="category-grid" aria-label="Product categories">
         {categories.map((category) => (
@@ -110,7 +110,9 @@ function Categories() {
               </div>
 
               <div className="category-card__body">
-                <h2 className="category-card__name">{category.name}</h2>
+                <h2 className="category-card__name">
+                  {category.name}
+                </h2>
 
                 {category.description && (
                   <p className="category-card__description">
@@ -118,8 +120,6 @@ function Categories() {
                   </p>
                 )}
 
-                {/* The link's ::after stretches over the whole card, so
-                    clicking anywhere on the card navigates. */}
                 <Link
                   to={`/categories/${category.id}`}
                   className="category-card__cta"
@@ -136,5 +136,3 @@ function Categories() {
     </main>
   )
 }
-
-export default Categories
