@@ -11,6 +11,7 @@ import CategoriesPage from "./pages/categories_new";
 import UserProfilePreview from "./pages/UserProfile";
 import SearchResults from "./pages/search";
 import AllProducts from "./pages/AllProducts";
+import WishlistPage from "./pages/WishlistPage";
 
 import OrderHistory from "./pages/OrderHistory"
 
@@ -29,6 +30,7 @@ export default function App() {
         />
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
         <Route
           path="/profile"
           element={<UserProfilePreview />}
