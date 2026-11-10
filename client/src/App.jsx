@@ -13,6 +13,9 @@ import SearchResults from "./pages/search";
 import AllProducts from "./pages/AllProducts";
 
 import OrderHistory from "./pages/OrderHistory"
+import ProductListing from "./pages/ProductListing";
+import ProductDetail from "./pages/ProductDetail";
+import ProductManagement from "./pages/admin/ProductManagement";
 
 export default function App() {
   return (
@@ -54,6 +57,9 @@ export default function App() {
         />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/order-history" element={<OrderHistory />} />
+         <Route path="/products" element={<ProductListing />} />
+        <Route path="/products/:id" element={<ProductDetail />} />
+       
       </Route>
 
       <Route
@@ -62,6 +68,8 @@ export default function App() {
       />
       <Route path="/register" element={<UserRegister />} />
       <Route path="/all-products" element={<AllProducts />} />
+      <Route path="/admin/products" element={<ProductManagement />} />
+      
     </Routes>
   );
 }
