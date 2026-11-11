@@ -258,3 +258,169 @@
     flex-wrap: wrap;
   }
 }
+
+/* Modal Overlay */
+.order-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+/* Modal Container */
+.order-modal {
+  width: 100%;
+  max-width: 750px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 30px;
+  box-sizing: border-box;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Modal Header */
+.order-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #dddddd;
+  padding-bottom: 15px;
+}
+
+.order-modal-header h2 {
+  margin: 0;
+  color: #194a25;
+  font-size: 24px;
+}
+
+.order-modal-close {
+  background: none;
+  border: none;
+  font-size: 30px;
+  color: #666666;
+  cursor: pointer;
+}
+
+.order-modal-close:hover {
+  color: #194a25;
+}
+
+/* Order Information */
+.order-modal-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.order-modal-info > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.order-modal-info > div > span:first-child {
+  color: #777777;
+  font-size: 13px;
+}
+
+.order-modal-info strong {
+  color: #333333;
+  font-size: 14px;
+}
+
+/* Product Details */
+.order-modal-products h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #222222;
+}
+
+.order-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.order-detail-table th {
+  background-color: #194a25;
+  color: #ffffff;
+  padding: 12px 8px;
+  font-size: 13px;
+}
+
+.order-detail-table td {
+  padding: 13px 8px;
+  border-bottom: 1px solid #dddddd;
+  font-size: 13px;
+  color: #333333;
+}
+
+/* Total Price */
+.order-modal-total {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid #dddddd;
+}
+
+.order-modal-total span {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.order-modal-total strong {
+  font-size: 22px;
+  color: #194a25;
+}
+
+/* Modal Footer */
+.order-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 25px;
+}
+
+.order-modal-footer button {
+  background-color: #194a25;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 25px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.order-modal-footer button:hover {
+  background-color: #286638;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .order-modal {
+    padding: 20px 15px;
+  }
+
+  .order-modal-info {
+    grid-template-columns: 1fr;
+  }
+
+  .order-modal-products {
+    overflow-x: auto;
+  }
+
+  .order-detail-table {
+    min-width: 500px;
+  }
+}

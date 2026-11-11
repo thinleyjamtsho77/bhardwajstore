@@ -3,12 +3,54 @@ import { Link } from "react-router";
 import ProfileSidebar from "../components/ProfileSidebar";
 import "../assets/styles/order-history.css";
 
-const ORDERS = [
-    { id: "#ORD0008", date: "25/07/2026", price: "$85.50", status: "Delivered" },
-    { id: "#ORD0007", date: "20/07/2026", price: "$42.00", status: "Processing" },
-    { id: "#ORD0006", date: "15/07/2026", price: "$126.80", status: "Cancelled" },
-    { id: "#ORD0005", date: "12/07/2026", price: "$63.20", status: "Delivered" },
+
+const orders = [
+    {
+        id: "#ORD0008",
+        date: "25/07/2026",
+        price: "$85.50",
+        status: "Delivered",
+        items: [
+            { name: "Fresh Apples", quantity: 2, price: 6.00 },
+            { name: "Full Cream Milk", quantity: 1, price: 3.50 },
+            { name: "Wholemeal Bread", quantity: 2, price: 5.00 },
+        ],
+    },
+    {
+        id: "#ORD0007",
+        date: "20/07/2026",
+        price: "$42.00",
+        status: "Processing",
+        items: [
+            { name: "Bananas", quantity: 1, price: 4.00 },
+            { name: "Orange Juice", quantity: 2, price: 5.50 },
+            { name: "Eggs", quantity: 1, price: 7.00 },
+        ],
+    },
+    {
+        id: "#ORD0006",
+        date: "15/07/2026",
+        price: "$126.80",
+        status: "Cancelled",
+        items: [
+            { name: "Rice", quantity: 2, price: 15.00 },
+            { name: "Cooking Oil", quantity: 1, price: 12.80 },
+            { name: "Chicken", quantity: 3, price: 28.00 },
+        ],
+    },
+    {
+        id: "#ORD0005",
+        date: "12/07/2026",
+        price: "$63.20",
+        status: "Delivered",
+        items: [
+            { name: "Potatoes", quantity: 2, price: 8.00 },
+            { name: "Tomatoes", quantity: 3, price: 5.00 },
+            { name: "Cheese", quantity: 1, price: 12.20 },
+        ],
+    },
 ];
+
 
 const MONTHS = {
     "One month": 1,
@@ -26,8 +68,10 @@ const parseOrderDate = (dateString) => {
 export default function OrderHistory() {
     const [filter, setFilter] = useState("One month");
 
+    const [selectedOrder, setSelectedOrder] = useState(null);
+
     // Filter orders based on selected period
-    const filteredOrders = ORDERS.filter((order) => {
+    const filteredOrders = orders.filter((order) => {
         const orderDate = parseOrderDate(order.date);
 
         const today = new Date();
@@ -103,7 +147,7 @@ export default function OrderHistory() {
                                                     <button
                                                         className="order-view-button"
                                                         type="button"
-                                                        onClick={() => alert(`Viewing order ${order.id}`)}
+                                                        onClick={() => setSelectedOrder(order)}
                                                     >
                                                         View
                                                     </button>
@@ -121,6 +165,102 @@ export default function OrderHistory() {
                             </table>
                         </div>
                     </section>
+
+                    {/* Order Details Modal */}
+                    {selectedOrder && (
+                        <div
+                            className="order-modal-overlay"
+                            onClick={() => setSelectedOrder(null)}
+                        >
+                            <div
+                                className="order-modal"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {/* Modal Header */}
+                                <div className="order-modal-header">
+                                    <h2>Order Details</h2>
+
+                                    <button
+                                        type="button"
+                                        className="order-modal-close"
+                                        onClick={() => setSelectedOrder(null)}
+                                        aria-label="Close order details"
+                                    >
+                                        &times;
+                                    </button>
+                                </div>
+
+                                {/* Order Information */}
+                                <div className="order-modal-info">
+                                    <div>
+                                        <span>Order Number</span>
+                                        <strong>{selectedOrder.id}</strong>
+                                    </div>
+
+                                    <div>
+                                        <span>Order Date</span>
+                                        <strong>{selectedOrder.date}</strong>
+                                    </div>
+
+                                    <div>
+                                        <span>Order Status</span>
+                                        <span
+                                            className={`order-status ${selectedOrder.status.toLowerCase()}`}
+                                        >
+                                            {selectedOrder.status}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Products */}
+                                <div className="order-modal-products">
+                                    <h3>Ordered Products</h3>
+
+                                    <table className="order-detail-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Quantity</th>
+                                                <th>Unit Price</th>
+                                                <th>Subtotal</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {selectedOrder.items.map((item, index) => (
+                                                <tr key={index}>
+                                                    <td>{item.name}</td>
+                                                    <td>{item.quantity}</td>
+                                                    <td>${item.price.toFixed(2)}</td>
+                                                    <td>
+                                                        ${(item.quantity * item.price).toFixed(2)}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {/* Total */}
+                                <div className="order-modal-total">
+                                    <span>Total Price</span>
+                                    <strong>{selectedOrder.price}</strong>
+                                </div>
+
+                                {/* Footer */}
+                                <div className="order-modal-footer">
+                                    <button
+                                        type="button"
+                                        onClick={() => setSelectedOrder(null)}
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    )}
+
                 </div>
             </section>
         </>
