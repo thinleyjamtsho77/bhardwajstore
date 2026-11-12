@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router";
 import MainLayout from "./components/main-layout";
+import "./assets/styles/admin-management.css";
 import RequireAuth from "./components/RequireAuth";
 import Page from "./components/PlaceholderPage";
 
@@ -22,6 +23,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminCategoriesPage from "./pages/admin/AdminCategories";
 import AdminCategoriesPreview from "./pages/admin/AdminCategoriesPreview";
 import StaffManagement from "./pages/admin/StaffManagement";
+import CustomerManagement from "./pages/admin/CustomerManagement";
+import InventoryManagement from "./pages/admin/InventoryManagement";
 
 export default function App() {
   return (
@@ -66,9 +69,9 @@ export default function App() {
         <Route path="categories-preview" element={<AdminCategoriesPreview />} />
         <Route path="products" element={<Page title="Product Mangement" />} />
         <Route path="orders" element={<Page title="Order Mangement" />} />
-        <Route path="customers" element={<Page title="Customer Mangement" />} />
+        <Route path="customers" element={<CustomerManagement />} />
         <Route path="staffs" element={<StaffManagement />} />
-        <Route path="inventory" element={<Page title="Inventory Mangement" />} />
+        <Route path="inventory" element={<InventoryManagement />} />
         <Route path="payments" element={<Page title="Payment Management" />} />
         <Route path="settings" element={<Page title="Settings" />} />
         <Route path="*" element={<Page title="Page not found" />} />
