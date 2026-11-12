@@ -5,15 +5,18 @@ import Home from "./pages/HomePage";
 import Cart from "./pages/cartPage";
 import UserLogin from "./pages/UserLogin";
 import UserRegister from "./pages/UserRegistration";
-import AdminCategoriesPage from "./pages/admin/AdminCategories";
-import AdminCategoriesPreview from "./pages/admin/AdminCategoriesPreview";
 import CategoriesPage from "./pages/categories_new";
 import UserProfilePreview from "./pages/UserProfile";
 import SearchResults from "./pages/search";
 import AllProducts from "./pages/AllProducts";
 import WishlistPage from "./pages/WishlistPage";
+import OrderHistory from "./pages/OrderHistory";
 
-import OrderHistory from "./pages/OrderHistory"
+// Admin import
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminCategoriesPage from "./pages/admin/AdminCategories";
+import AdminCategoriesPreview from "./pages/admin/AdminCategoriesPreview";
+
 
 export default function App() {
   return (
@@ -64,6 +67,7 @@ export default function App() {
       />
       <Route path="/register" element={<UserRegister />} />
       <Route path="/all-products" element={<AllProducts />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
     </Routes>
   );
 }
