@@ -1,0 +1,58 @@
+.admin-layout {
+  /* Shared with the navbar and the mobile sidebar drawer */
+  --admin-navbar-height: 146px;
+  --admin-sidebar-width: 240px;
+  --admin-green-dark: #1a4a1e;
+  --admin-green: #2e7d32;
+  --admin-border: #c8c8c8;
+  --admin-text: #1a1a1a;
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #fff;
+  color: var(--admin-text);
+  font-family: Roboto, "Segoe UI", Arial, sans-serif;
+}
+
+.admin-layout__skip {
+  position: absolute;
+  left: -9999px;
+}
+.admin-layout__skip:focus {
+  left: 16px;
+  top: 8px;
+  z-index: 100;
+  padding: 8px 12px;
+  background: #fff;
+  border: 2px solid #f57c00;
+}
+
+.admin-layout__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.admin-layout__main {
+  flex: 1;
+  min-width: 0;            /* lets tables and charts shrink instead of overflowing */
+  padding: 24px 28px 48px;
+}
+.admin-layout__main:focus { outline: none; }
+
+.admin-layout__backdrop { display: none; }
+
+@media (max-width: 900px) {
+  .admin-layout { --admin-navbar-height: 72px; }
+
+  .admin-layout__main { padding: 16px; }
+
+  .admin-layout__backdrop {
+    display: block;
+    position: fixed;
+    inset: var(--admin-navbar-height) 0 0 0;
+    z-index: 40;
+    background: rgba(0, 0, 0, 0.4);
+  }
+}
