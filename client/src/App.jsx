@@ -18,6 +18,7 @@ import OrderHistory from "./pages/OrderHistory";
 // Admin pages
 import AdminLayout from "./components/AdminLayout";
 import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminCategoriesPage from "./pages/admin/AdminCategories";
 import AdminCategoriesPreview from "./pages/admin/AdminCategoriesPreview";
 import StaffManagement from "./pages/admin/StaffManagement";
@@ -60,7 +61,7 @@ export default function App() {
           </RequireAuth>
         }
       >
-        <Route index element={<Page title="Dashboard" />} />
+        <Route index element={<AdminDashboard />} />
         <Route path="categories" element={<AdminCategoriesPage />} />
         <Route path="categories-preview" element={<AdminCategoriesPreview />} />
         <Route path="products" element={<Page title="Product Mangement" />} />
