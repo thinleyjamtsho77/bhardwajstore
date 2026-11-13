@@ -8,6 +8,7 @@ import categoriesRouter from "./routes/categories.js";
 import productsRouter from "./routes/product.js";
 import authRouter from "./routes/auth.js";
 import cartRouter from "./routes/cart.js";
+import staffRouter from "./routes/staff.js";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use("/api/categories", categoriesRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/cart", cartRouter);
+app.use("/api/admin/staff", staffRouter);
 
 const port = Number(process.env.PORT || 5000);
 

@@ -20,6 +20,7 @@ import AdminLayout from "./components/AdminLayout";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminCategoriesPage from "./pages/admin/AdminCategories";
 import AdminCategoriesPreview from "./pages/admin/AdminCategoriesPreview";
+import StaffManagement from "./pages/admin/StaffManagement";
 
 export default function App() {
   return (
@@ -65,7 +66,7 @@ export default function App() {
         <Route path="products" element={<Page title="Product Mangement" />} />
         <Route path="orders" element={<Page title="Order Mangement" />} />
         <Route path="customers" element={<Page title="Customer Mangement" />} />
-        <Route path="staffs" element={<Page title="Staff Management" />} />
+        <Route path="staffs" element={<StaffManagement />} />
         <Route path="inventory" element={<Page title="Inventory Mangement" />} />
         <Route path="payments" element={<Page title="Payment Management" />} />
         <Route path="settings" element={<Page title="Settings" />} />
