@@ -1,0 +1,108 @@
+.admin-sidebar {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  width: var(--admin-sidebar-width, 240px);
+  padding: 48px 20px 32px;
+  background: var(--admin-green-dark, #1a4a1e);
+  color: #fff;
+}
+
+.admin-sidebar__list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Main navigation buttons (white pills, as in the mockup) */
+.admin-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 6px;
+  background: #fff;
+  color: #111;
+  font: 500 16px Roboto, "Segoe UI", Arial, sans-serif;
+  text-decoration: none;
+}
+.admin-sidebar__link .admin-sidebar__icon { color: var(--admin-green, #2e7d32); }
+.admin-sidebar__link:hover { background: #eef6ee; }
+
+.admin-sidebar__link--active {
+  background: #cfe6cf;
+  box-shadow: inset 4px 0 0 var(--admin-green, #2e7d32);
+  font-weight: 700;
+}
+
+/* Setting and Log Out */
+.admin-sidebar__footer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.admin-sidebar__small {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: #fff;
+  font: 500 16px Roboto, "Segoe UI", Arial, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+}
+.admin-sidebar__small:hover { text-decoration: underline; }
+.admin-sidebar__small.active { font-weight: 700; }
+
+.admin-sidebar__error {
+  margin: 4px 0 0;
+  color: #ffd2d2;
+  font-size: 13px;
+}
+
+.admin-sidebar__icon { flex: none; }
+
+:where(.admin-sidebar__link, .admin-sidebar__small):focus-visible {
+  outline: 2px solid #f57c00;
+  outline-offset: 3px;
+}
+
+/* Mobile: sidebar becomes a drawer under the navbar */
+@media (max-width: 900px) {
+  .admin-sidebar {
+    position: fixed;
+    top: var(--admin-navbar-height, 72px);
+    bottom: 0;
+    left: 0;
+    z-index: 50;
+    width: min(280px, 85vw);
+    overflow-y: auto;
+    transform: translateX(-100%);
+    visibility: hidden;   /* keeps closed links out of the tab order */
+    transition: transform 0.2s ease, visibility 0s linear 0.2s;
+  }
+
+  .admin-sidebar--open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.2s ease;
+  }
+
+  .admin-sidebar__list { gap: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-sidebar,
+  .admin-sidebar--open { transition: none; }
+}
