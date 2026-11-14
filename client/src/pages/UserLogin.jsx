@@ -96,7 +96,7 @@ export default function Login({
     try {
       const data = await loginUser({ email: email.trim(), password, rememberMe });
       setUser(data);
-      navigate(afterLoginTo);
+      navigate(location.state?.from?.pathname ?? afterLoginTo);
     } catch (err) {
       setNotice({ type: "error", text: err?.message || "We couldn’t sign you in. Check your details and try again." });
       setPending(false);
