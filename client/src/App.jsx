@@ -28,6 +28,10 @@ import StaffManagement from "./pages/admin/StaffManagement";
 import CustomerManagement from "./pages/admin/CustomerManagement";
 import InventoryManagement from "./pages/admin/InventoryManagement";
 
+//Preventive measure for features that are not completed yet
+import AdminComingSoon from "./components/AdminComingSoon";
+import ComingSoon from "./components/ComingSoon";
+
 export default function App() {
   return (
     <Routes>
@@ -39,7 +43,7 @@ export default function App() {
         <Route path="/search" element={<SearchResults />} />
         <Route path="/cart" element={<Cart />} />
         
-        <Route path="/checkout" element={<RequireAuth><Page title="Checkout" /></RequireAuth>} />
+        <Route path="/checkout" element={<RequireAuth><Checkout /></RequireAuth>} />
         <Route path="/profile" element={<RequireAuth><UserProfilePreview /></RequireAuth>} />
         <Route path="/account" element={<Navigate to="/profile" replace />} />
         <Route path="/settings" element={<RequireAuth><Page title="Settings" /></RequireAuth>} />
@@ -48,13 +52,13 @@ export default function App() {
         <Route path="/checkout" element={<RequireAuth><Checkout /></RequireAuth>} />
         <Route path="/order-confirmation/:orderNumber" element={<RequireAuth><Page title="Order Confirmation" /></RequireAuth>} />
 
-        <Route path="/deals" element={<Page title="Deals" />} />
-        <Route path="/faqs" element={<Page title="FAQs" />} />
-        <Route path="/about" element={<Page title="About Us" />} />
-        <Route path="/click-and-collect" element={<Page title="How Click & Collect Works" />} />
-        <Route path="/refund-policy" element={<Page title="Order Cancellation and Refund Policy" />} />
-        <Route path="/terms" element={<Page title="Terms & Conditions" />} />
-        <Route path="/privacy" element={<Page title="Privacy Policy" />} />
+        <Route path="/deals" element={<ComingSoon title="Deals" />} />
+        <Route path="/faqs" element={<ComingSoon title="FAQs" />} />
+        <Route path="/about" element={<ComingSoon title="About Us" />} />
+        <Route path="/click-and-collect" element={<ComingSoon title="How Click & Collect Works" />} />
+        <Route path="/refund-policy" element={<ComingSoon title="Order Cancellation and Refund Policy" />} />
+        <Route path="/terms" element={<ComingSoon title="Terms & Conditions" />} />
+        <Route path="/privacy" element={<ComingSoon title="Privacy Policy" />} />
         
 
         <Route path="*" element={<Page title="Page not found" />} />
@@ -72,13 +76,13 @@ export default function App() {
         <Route index element={<AdminDashboard />} />
         <Route path="categories" element={<AdminCategoriesPage />} />
         <Route path="categories-preview" element={<AdminCategoriesPreview />} />
-        <Route path="products" element={<Page title="Product Mangement" />} />
-        <Route path="orders" element={<Page title="Order Mangement" />} />
+        <Route path="products" element={<AdminComingSoon title="Product Mangement" />} />
+        <Route path="orders" element={<AdminComingSoon title="Order Mangement" />} />
         <Route path="customers" element={<CustomerManagement />} />
         <Route path="staffs" element={<StaffManagement />} />
         <Route path="inventory" element={<InventoryManagement />} />
-        <Route path="payments" element={<Page title="Payment Management" />} />
-        <Route path="settings" element={<Page title="Settings" />} />
+        <Route path="payments" element={<AdminComingSoon title="Payment Management" />} />
+        <Route path="settings" element={<AdminComingSoon title="Settings" />} />
         <Route path="*" element={<Page title="Page not found" />} />
       </Route>
 
