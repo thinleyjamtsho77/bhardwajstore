@@ -14,6 +14,8 @@ import SearchResults from "./pages/search";
 import AllProducts from "./pages/AllProducts";
 import WishlistPage from "./pages/WishlistPage";
 import OrderHistory from "./pages/OrderHistory";
+import Checkout from "./pages/Checkout";
+
 
 // Admin pages
 import AdminLayout from "./components/AdminLayout";
@@ -40,6 +42,8 @@ export default function App() {
         <Route path="/settings" element={<RequireAuth><Page title="Settings" /></RequireAuth>} />
         <Route path="/wishlist" element={<RequireAuth><WishlistPage /></RequireAuth>} />
         <Route path="/order-history" element={<RequireAuth><OrderHistory /></RequireAuth>} />
+        <Route path="/checkout" element={<RequireAuth><Checkout /></RequireAuth>} />
+        <Route path="/order-confirmation/:orderNumber" element={<RequireAuth><Page title="Order Confirmation" /></RequireAuth>} />
 
         <Route path="/deals" element={<Page title="Deals" />} />
         <Route path="/faqs" element={<Page title="FAQs" />} />
@@ -48,6 +52,7 @@ export default function App() {
         <Route path="/refund-policy" element={<Page title="Order Cancellation and Refund Policy" />} />
         <Route path="/terms" element={<Page title="Terms & Conditions" />} />
         <Route path="/privacy" element={<Page title="Privacy Policy" />} />
+        
 
         <Route path="*" element={<Page title="Page not found" />} />
       </Route>
