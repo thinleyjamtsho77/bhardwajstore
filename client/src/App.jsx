@@ -16,7 +16,9 @@ import AllProducts from "./pages/AllProducts";
 import WishlistPage from "./pages/WishlistPage";
 import OrderHistory from "./pages/OrderHistory";
 import Checkout from "./pages/Checkout";
-
+import ProductListing from "./pages/ProductListing";
+import ProductDetail from "./pages/ProductDetail";
+import ProductManagement from "./pages/admin/ProductManagement";
 
 // Admin pages
 import AdminLayout from "./components/AdminLayout";
@@ -46,6 +48,7 @@ export default function App() {
         <Route path="/wishlist" element={<RequireAuth><WishlistPage /></RequireAuth>} />
         <Route path="/order-history" element={<RequireAuth><OrderHistory /></RequireAuth>} />
         <Route path="/checkout" element={<RequireAuth><Checkout /></RequireAuth>} />
+        <Route path="/all-products" element={<AllProducts /></RequireAuth>} />
         <Route path="/order-confirmation/:orderNumber" element={<RequireAuth><Page title="Order Confirmation" /></RequireAuth>} />
 
         <Route path="/deals" element={<Page title="Deals" />} />
@@ -79,6 +82,7 @@ export default function App() {
         <Route path="inventory" element={<InventoryManagement />} />
         <Route path="payments" element={<Page title="Payment Management" />} />
         <Route path="settings" element={<Page title="Settings" />} />
+        <Route path="/admin/products" element={<ProductManagement />} />
         <Route path="*" element={<Page title="Page not found" />} />
       </Route>
 
