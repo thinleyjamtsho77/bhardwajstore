@@ -69,55 +69,64 @@ export async function register(req, res) {
   }
 }
 
-export async function login(req, res) {
-  const { email, password, rememberMe } = req.body;
+function loginFunc({ allowedRoles = null, adminSession = false } = {}) {
+  return async function loginHandler(req, res) {
+    const { email, password, rememberMe } = req.body;
 
-  if (typeof email !== "string" || typeof password !== "string" || !email || !password) {
-    return res.status(400).json({ message: "Email and password are required" });
-  }
-  if (password.length > 72) {
-    return res.status(401).json({ message: "Incorrect email or password" });
-  }
-
-  try {
-    const [rows] = await pool.execute(
-      `SELECT user_id, name, email, phone, password_hash, role, account_status
-       FROM users WHERE email = ?`,
-      [email.trim().toLowerCase()]
-    );
-    const user = rows[0];
-
-    const passwordOk = await bcrypt.compare(password, user ? user.password_hash : DUMMY_HASH);
-    if (!user || !passwordOk) {
+    if (typeof email !== "string" || typeof password !== "string" || !email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+    if (password.length > 72) {
       return res.status(401).json({ message: "Incorrect email or password" });
     }
-    if (user.account_status !== "active") {
-      return res.status(403).json({ message: "This account is not active. Please contact the store." });
+
+    try {
+      const [rows] = await pool.execute(
+        `SELECT user_id, name, email, phone, password_hash, role, account_status
+         FROM users WHERE email = ?`,
+        [email.trim().toLowerCase()]
+      );
+      const user = rows[0];
+
+      const passwordOk = await bcrypt.compare(password, user ? user.password_hash : DUMMY_HASH);
+      if (!user || !passwordOk) {
+        return res.status(401).json({ message: "Incorrect email or password" });
+      }
+
+      // A customer using the admin form gets the same message as a wrong password, so the form can't be used to discover which accounts are staff
+      if (allowedRoles && !allowedRoles.includes(user.role)) {
+        return res.status(401).json({ message: "Incorrect email or password" });
+      }
+
+      if (user.account_status !== "active") {
+        return res.status(403).json({ message: "This account is not active. Please contact the store." });
+      }
+
+      // Admin sessions are short and never persistent
+      const remember = !adminSession && Boolean(rememberMe);
+      const token = jwt.sign(
+        { sub: user.user_id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: adminSession ? "8h" : remember ? "30d" : "1d" }
+      );
+
+      res.cookie("token", token, {
+        ...cookieOptions,
+        maxAge: remember ? 30 * 24 * 60 * 60 * 1000 : undefined,
+      });
+
+      res.json({
+        id: user.user_id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+      });
+    } catch (error) {
+      console.error("Login failed:", error.code || error.message);
+      res.status(500).json({ message: "Unable to sign in" });
     }
-
-    const token = jwt.sign(
-      { sub: user.user_id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: rememberMe ? "30d" : "1d" }
-    );
-
-    res.cookie("token", token, {
-      ...cookieOptions,
-      // Remember me = persistent cookie; otherwise it ends when the browser closes
-      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined,
-    });
-
-    res.json({
-      id: user.user_id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-    });
-  } catch (error) {
-    console.error("Login failed:", error.code || error.message);
-    res.status(500).json({ message: "Unable to sign in" });
-  }
+  };
 }
 
 export async function me(req, res) {
@@ -152,3 +161,6 @@ export function logout(req, res) {
   res.clearCookie("token", cookieOptions);
   res.json({ message: "Logged out" });
 }
+
+export const login = loginFunc();
+export const adminLogin = loginFunc({ allowedRoles: ["staff", "admin"], adminSession: true });

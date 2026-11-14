@@ -1,0 +1,90 @@
+.store-sidebar {
+  --sidebar-green: #19451c;
+  --sidebar-icon: #2e8034;
+  box-sizing: border-box;
+  width: 240px;
+  height: 100vh;
+  height: 100dvh;
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 48px 17px 16px 21px;
+  background: var(--sidebar-green);
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.store-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  flex-shrink: 0;
+}
+
+.store-sidebar__link {
+  box-sizing: border-box;
+  min-height: 39px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 10px 22px;
+  border-radius: 11px;
+  background: #fff;
+  color: #080808;
+  text-decoration: none;
+  font-size: 16px;
+  line-height: 19px;
+  font-weight: 600;
+  transition: background-color 150ms ease;
+}
+
+.store-sidebar__link:hover { background: #e7f3e6; }
+.store-sidebar__link--active { box-shadow: inset 0 0 0 2px #c2dfbd; }
+.store-sidebar__icon { width: 15px; height: 15px; flex-shrink: 0; color: var(--sidebar-icon); }
+
+.store-sidebar__footer {
+  margin-top: auto;
+  padding-top: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex-shrink: 0;
+}
+
+.store-sidebar__footer-action {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 20px;
+  padding: 0 3px;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  text-decoration: none;
+  text-align: left;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.store-sidebar__footer-action:hover { text-decoration: underline; }
+.store-sidebar__footer-action:disabled { cursor: not-allowed; }
+.store-sidebar__footer-icon { width: 20px; height: 20px; flex-shrink: 0; }
+.store-sidebar__link:focus-visible,
+.store-sidebar__footer-action:focus-visible { outline: 3px solid #f2d46b; outline-offset: 4px; }
+
+@media (max-width: 600px) {
+  .store-sidebar { width: 76px; padding: 24px 12px 16px; }
+  .store-sidebar__nav { gap: 16px; }
+  .store-sidebar__link { justify-content: center; min-height: 44px; padding: 12px; }
+  .store-sidebar__icon { width: 19px; height: 19px; }
+  .store-sidebar__footer-action { justify-content: center; min-height: 36px; }
+  /* Keep labels available to screen readers in the compact mobile sidebar. */
+  .store-sidebar__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+}
