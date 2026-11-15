@@ -1,19 +1,21 @@
 import { randomBytes } from "node:crypto";
 import pool from "../config/db.js";
-import stripe from "../config/stripe.js";
+import { sendMail } from "../config/mailer.js";
 
-const CURRENCY = "inr";
-const GST_RATE = 0; // set to e.g. 0.05 when GST applies (keep in sync with the cart controller)
+const GST_RATE = 0; // Should be same as GST in cart controller
 
-// Money is handled in paise (integers) so totals never pick up floating-point errors
+const STORE = {
+  name: "Bhardwaj Grocery Store",
+  address: "Amritsar, Punjab, India",
+  hours: "Mon - Sun 10:00 AM - 9:00 PM",
+  email: "info@bhardwaj.hotmail.com",
+};
+
+// Conversion to avoid floating point
 const toPaise = (value) => Math.round(Number(value) * 100);
 const toRupees = (paise) => (paise / 100).toFixed(2);
-
-function makeOrderNumber() {
-  const d = new Date();
-  const ymd = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
-  return `BG-${ymd}-${randomBytes(3).toString("hex").toUpperCase()}`;
-}
+const formatMoney = (n) =>
+  "₹ " + Number(n).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 function cleanContact(body) {
   const { firstName, lastName, email, phone, address } = body ?? {};
@@ -48,23 +50,16 @@ function cleanContact(body) {
   return c;
 }
 
-/**
- * POST /api/checkout
- * Turns the signed-in user's cart into a pending order, then creates the Stripe PaymentIntent.
- * Prices and totals always come from the database, never from the browser.
- */
-export async function createCheckout(req, res) {
+//POST /api/checkout -> Simulated Payment
+export async function placeOrder(req, res) {
   const contact = cleanContact(req.body);
   if (contact.error) return res.status(400).json({ message: contact.error });
 
   const userId = req.user.id;
-  const conn = await pool.getConnection();
-  let orderId;
-  let orderNumber;
-  let totalPaise;
-  const staleRefs = [];
+  let conn;
 
   try {
+    conn = await pool.getConnection();
     await conn.beginTransaction();
 
     const [carts] = await conn.execute(
@@ -74,14 +69,14 @@ export async function createCheckout(req, res) {
       [userId]
     );
 
+    // Prices always come from the database
     const [lines] = carts[0]
       ? await conn.execute(
-          `SELECT ci.product_id, p.product_name, p.sku, p.price, ci.quantity,
-                  (inv.quantity_available - inv.reserved_quantity) AS available
+          `SELECT ci.product_id, p.product_name, p.sku, p.price, ci.quantity
            FROM cart_items ci
            JOIN products p ON p.product_id = ci.product_id AND p.is_active = 1
-           LEFT JOIN inventory inv ON inv.product_id = p.product_id
-           WHERE ci.cart_id = ?`,
+           WHERE ci.cart_id = ?
+           ORDER BY ci.product_id`, 
           [carts[0].cart_id]
         )
       : [[]];
@@ -91,12 +86,21 @@ export async function createCheckout(req, res) {
       return res.status(400).json({ message: "Your cart is empty." });
     }
 
+    // Lock each stock row while we check it, so two customers can't buy the last item together
     for (const l of lines) {
-      if (l.available != null && l.quantity > Number(l.available)) {
-        await conn.rollback();
-        return res.status(409).json({
-          message: `${l.product_name}: only ${Number(l.available)} available. Update your cart and try again.`,
-        });
+      const [inv] = await conn.execute(
+        "SELECT quantity_available, reserved_quantity FROM inventory WHERE product_id = ? FOR UPDATE",
+        [l.product_id]
+      );
+      l.tracked = inv.length > 0;
+      if (l.tracked) {
+        const available = inv[0].quantity_available - inv[0].reserved_quantity;
+        if (l.quantity > available) {
+          await conn.rollback();
+          return res.status(409).json({
+            message: `${l.product_name}: only ${available} available. Update your cart and try again.`,
+          });
+        }
       }
     }
 
@@ -106,37 +110,28 @@ export async function createCheckout(req, res) {
     });
     const subtotalPaise = priced.reduce((sum, l) => sum + l.linePaise, 0);
     const taxPaise = Math.round(subtotalPaise * GST_RATE);
-    totalPaise = subtotalPaise + taxPaise;
+    const totalPaise = subtotalPaise + taxPaise;
 
-    // A retry after a failed card must not leave duplicate unpaid orders behind
-    const [stale] = await conn.execute(
-      `SELECT o.order_id, py.transaction_reference
-       FROM orders o
-       LEFT JOIN payments py ON py.order_id = o.order_id
-       WHERE o.user_id = ? AND o.order_status = 'pending' AND o.payment_status IN ('pending', 'failed')`,
-      [userId]
-    );
-    for (const s of stale) {
-      await conn.execute("UPDATE orders SET order_status = 'cancelled' WHERE order_id = ?", [s.order_id]);
-      await conn.execute(
-        "UPDATE payments SET payment_status = 'cancelled' WHERE order_id = ? AND payment_status IN ('pending', 'failed')",
-        [s.order_id]
-      );
-      if (s.transaction_reference) staleRefs.push(s.transaction_reference);
-    }
-
-    // The orders table has no contact columns, so the pickup contact goes into the customer notes
-    const notes =
-      `Contact: ${contact.firstName} ${contact.lastName} | ${contact.email} | ${contact.phone}` +
-      (contact.address ? ` | Address: ${contact.address}` : "");
-
-    orderNumber = makeOrderNumber();
     const [orderResult] = await conn.execute(
-      `INSERT INTO orders (order_number, user_id, subtotal, tax_amount, total_amount, customer_notes)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [orderNumber, userId, toRupees(subtotalPaise), toRupees(taxPaise), toRupees(totalPaise), notes]
+      `INSERT INTO orders
+         (order_number, user_id, contact_name, contact_email, contact_phone, contact_address,
+          order_status, payment_status, subtotal, tax_amount, total_amount)
+       VALUES (?, ?, ?, ?, ?, ?, 'confirmed', 'paid', ?, ?, ?)`,
+      [
+        `TMP-${randomBytes(8).toString("hex")}`,
+        userId,
+        `${contact.firstName} ${contact.lastName}`,
+        contact.email,
+        contact.phone,
+        contact.address || null,
+        toRupees(subtotalPaise),
+        toRupees(taxPaise),
+        toRupees(totalPaise),
+      ]
     );
-    orderId = orderResult.insertId;
+    const orderId = orderResult.insertId;
+    const orderNumber = `BG-${String(orderId).padStart(5, "0")}`;
+    await conn.execute("UPDATE orders SET order_number = ? WHERE order_id = ?", [orderNumber, orderId]);
 
     for (const l of priced) {
       await conn.execute(
@@ -144,61 +139,170 @@ export async function createCheckout(req, res) {
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [orderId, l.product_id, l.product_name, l.sku, l.quantity, toRupees(l.unitPaise), toRupees(l.linePaise)]
       );
+
+      if (l.tracked) {
+        await conn.execute(
+          "UPDATE inventory SET quantity_available = quantity_available - ? WHERE product_id = ?",
+          [l.quantity, l.product_id]
+        );
+        await conn.execute(
+          `INSERT INTO inventory_transactions (product_id, transaction_type, quantity_change, reference_id, notes)
+           VALUES (?, 'sale', ?, ?, ?)`,
+          [l.product_id, -l.quantity, orderId, `Order ${orderNumber}`]
+        );
+      }
     }
 
+    // The amount paid is recorded here
     await conn.execute(
-      `INSERT INTO payments (order_id, payment_method, payment_status, amount)
-       VALUES (?, 'card', 'pending', ?)`,
-      [orderId, toRupees(totalPaise)]
+      `INSERT INTO payments (order_id, payment_method, payment_status, transaction_reference, amount, paid_at)
+       VALUES (?, 'card', 'paid', ?, ?, NOW())`,
+      [orderId, `SIMULATED-${orderNumber}`, toRupees(totalPaise)]
     );
+
+    // Pickup token, built from its row id like the order number (BGS-0032)
+    const [tokenResult] = await conn.execute(
+      "INSERT INTO pickup_tokens (order_id, token_number) VALUES (?, ?)",
+      [orderId, `TMP${randomBytes(8).toString("hex")}`]
+    );
+    const token = `BGS-${String(tokenResult.insertId).padStart(4, "0")}`;
+    await conn.execute("UPDATE pickup_tokens SET token_number = ? WHERE pickup_token_id = ?", [
+      token,
+      tokenResult.insertId,
+    ]);
+
+    await conn.execute("UPDATE shopping_carts SET status = 'converted' WHERE cart_id = ?", [carts[0].cart_id]);
 
     await conn.commit();
-  } catch (error) {
-    await conn.rollback().catch(() => {});
-    console.error("Create order failed:", error.code || error.message);
-    return res.status(500).json({ message: "Unable to start checkout. Please try again." });
-  } finally {
-    conn.release();
-  }
-
-  // Stripe call happens after the order exists, so the PaymentIntent can carry its id
-  let intent;
-  try {
-    intent = await stripe.paymentIntents.create(
-      {
-        amount: totalPaise,
-        currency: CURRENCY,
-        payment_method_types: ["card"],
-        receipt_email: contact.email,
-        description: `Bhardwaj Grocery Store order ${orderNumber}`,
-        metadata: { order_id: String(orderId), order_number: orderNumber, user_id: String(userId) },
-      },
-      { idempotencyKey: `pi-order-${orderId}` }
-    );
-  } catch (error) {
-    console.error("Stripe PaymentIntent failed:", error.type, error.code || error.message);
-    await pool.execute(
-      "UPDATE orders SET order_status = 'cancelled', payment_status = 'failed' WHERE order_id = ?",
-      [orderId]
-    );
-    await pool.execute("UPDATE payments SET payment_status = 'failed' WHERE order_id = ?", [orderId]);
-    return res.status(502).json({ message: "The payment service is unavailable. Please try again." });
-  }
-
-  try {
-    await pool.execute("UPDATE payments SET transaction_reference = ? WHERE order_id = ?", [intent.id, orderId]);
-
-    // Best effort: close the PaymentIntents of the orders we just cancelled
-    await Promise.all(staleRefs.map((ref) => stripe.paymentIntents.cancel(ref).catch(() => {})));
 
     res.status(201).json({
-      orderId,
       orderNumber,
-      clientSecret: intent.client_secret,
+      token,
       total: totalPaise / 100,
+      email: contact.email,
     });
   } catch (error) {
-    console.error("Save payment reference failed:", error.code || error.message);
-    res.status(500).json({ message: "Unable to start checkout. Please try again." });
+    await conn?.rollback().catch(() => {});
+    console.error("Place order failed:", error.code || error.message);
+    res.status(500).json({ message: "Unable to place your order. Please try again." });
+  } finally {
+    conn?.release();
+  }
+}
+
+// Email the order details
+
+const escapeHtml = (value) =>
+  String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+
+// At most 3 emails per order per hour
+const EMAIL_LIMIT = 3;
+const EMAIL_WINDOW_MS = 60 * 60 * 1000;
+const emailLog = new Map();
+
+function buildEmail({ name, order, items }) {
+  const rowsText = items.map((i) => `  ${i.quantity} x ${i.product_name}  ${formatMoney(i.line_total)}`).join("\n");
+
+  const text = [
+    `Hi ${name},`,
+    "",
+    "Your order has been placed successfully.",
+    "",
+    `Order No: ${order.order_number}`,
+    `Pickup Token: ${order.token_number}`,
+    "",
+    "Items:",
+    rowsText,
+    "",
+    `Total paid: ${formatMoney(order.total_amount)}`,
+    "",
+    "Remember to take a picture of this email or your token and show it when you collect your order.",
+    "",
+    `${STORE.name}`,
+    `${STORE.address}`,
+    `Open: ${STORE.hours}`,
+    STORE.email,
+  ].join("\n");
+
+  const rowsHtml = items
+    .map(
+      (i) =>
+        `<tr><td style="padding:6px 0">${escapeHtml(i.quantity)} × ${escapeHtml(i.product_name)}</td>` +
+        `<td style="padding:6px 0;text-align:right">${escapeHtml(formatMoney(i.line_total))}</td></tr>`
+    )
+    .join("");
+
+  const html = `
+  <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px;background:#e9f2e9;border-radius:16px;color:#1a1a1a">
+    <h1 style="margin:0 0 8px;font-size:24px;text-align:center">Order Confirmed!</h1>
+    <p style="text-align:center;margin:0 0 20px">Hi ${escapeHtml(name)}, your order has been placed successfully.</p>
+    <p style="text-align:center;font-size:16px;margin:0 0 20px">
+      Order No: <strong>${escapeHtml(order.order_number)}</strong><br>
+      Pickup Token: <strong style="font-size:22px">${escapeHtml(order.token_number)}</strong>
+    </p>
+    <table style="width:100%;border-collapse:collapse;border-top:1px solid #c8d8c8;border-bottom:1px solid #c8d8c8;font-size:14px">${rowsHtml}</table>
+    <p style="text-align:right;font-size:16px;margin:12px 0 20px"><strong>Total paid: ${escapeHtml(formatMoney(order.total_amount))}</strong></p>
+    <p style="color:#f57c00;font-size:13px;margin:0 0 20px">** Remember to take a picture of this email or your token and show it when you collect your order.</p>
+    <p style="font-size:13px;color:#444;margin:0">
+      <strong>${escapeHtml(STORE.name)}</strong><br>${escapeHtml(STORE.address)}<br>Open: ${escapeHtml(STORE.hours)}<br>${escapeHtml(STORE.email)}
+    </p>
+  </div>`;
+
+  return { text, html };
+}
+
+// POST /api/checkout/:orderNumber/email
+
+export async function emailOrder(req, res) {
+  const orderNumber = String(req.params.orderNumber);
+  if (!/^BG-\d{5,}$/.test(orderNumber)) {
+    return res.status(400).json({ message: "Invalid order number" });
+  }
+
+  const key = `${req.user.id}:${orderNumber}`;
+  const now = Date.now();
+  const recent = (emailLog.get(key) ?? []).filter((t) => now - t < EMAIL_WINDOW_MS);
+  if (recent.length >= EMAIL_LIMIT) {
+    return res.status(429).json({ message: "The details were already emailed a few times. Please try again later." });
+  }
+
+  try {
+    const [orders] = await pool.execute(
+      `SELECT o.order_id, o.order_number, o.total_amount, o.contact_name, o.contact_email,
+              u.name AS account_name, u.email AS account_email, pt.token_number
+       FROM orders o
+       JOIN users u ON u.user_id = o.user_id
+       LEFT JOIN pickup_tokens pt ON pt.order_id = o.order_id
+       WHERE o.order_number = ? AND o.user_id = ?`,
+      [orderNumber, req.user.id] // the order must belong to the signed-in user
+    );
+    const order = orders[0];
+    if (!order || !order.token_number) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    const [items] = await pool.execute(
+      "SELECT product_name, quantity, line_total FROM order_items WHERE order_id = ? ORDER BY order_item_id",
+      [order.order_id]
+    );
+
+    const to = order.contact_email || order.account_email;
+    const name = order.contact_name || order.account_name;
+    const { text, html } = buildEmail({ name, order, items });
+
+    const result = await sendMail({
+      to,
+      subject: `Your ${STORE.name} order ${order.order_number}`,
+      text,
+      html,
+    });
+
+    recent.push(now);
+    emailLog.set(key, recent);
+
+    res.json({ sentTo: to, previewUrl: result.previewUrl });
+  } catch (error) {
+    console.error("Email order failed:", error.code || error.message);
+    res.status(502).json({ message: "We couldn’t send the email. Please try again." });
   }
 }

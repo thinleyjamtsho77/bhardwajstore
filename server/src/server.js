@@ -14,6 +14,9 @@ import adminRouter from "./routes/admin.js";
 import checkoutRouter from "./routes/checkout.js";
 import { handleStripeWebhook } from "./controllers/stripeWebhook.js";
 
+import checkoutRouter from "./routes/checkout.js";
+import { handleStripeWebhook } from "./controllers/stripeWebhook.js";
+
 
 const app = express();
 
@@ -23,8 +26,10 @@ app.use(express.json());
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
-app.use(cookieParser()); 
+app.use(cookieParser());
 
+app.use(cookieParser()); // must be before the routes
+app.use("/api/catalog", catalogRouter);
 app.use("/api/health", healthRouter);
 app.use("/api/categories", categoriesRouter);
 app.use("/api/products", productsRouter);
