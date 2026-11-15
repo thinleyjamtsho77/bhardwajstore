@@ -2,10 +2,6 @@ import { useState } from "react";
 import { Link } from "react-router";
 import "../assets/styles/services.css";
 
-/* ============================================================
-   EDIT HERE: everything below is sample content.
-   Confirm the real prices, hours and offers with the store owner.
-   ============================================================ */
 
 // Opening hours (24-hour clock, Indian Standard Time)
 const OPEN_HOUR = 7; // 7:00 AM

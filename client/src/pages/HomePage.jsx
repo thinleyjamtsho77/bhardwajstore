@@ -15,7 +15,14 @@ const CATEGORIES = [
   { slug: "dry-fruits-nuts", name: "Dry Fruits & Nuts", image: categories_img("nuts.png") },
 ];
 
-// Placeholder data until the best-sellers API exists
+const DEALS = [
+  { tag: "Save 10%", title: "Bulk Saver", text: "Buy 10 kg or more and pay ₹18/kg instead of ₹20/kg." },
+  { tag: "Wholesale", title: "Restaurants & Caterers", text: "Ordering 50 kg or more regularly? Ask us for a special rate and a weekly supply plan." },
+  { tag: "Family", title: "Monthly Grocery Pack", text: "Stock up on flour, oil, pulses, spices and rice once a month and save on every kilo." },
+  { tag: "Seasonal", title: "Festival Combos", text: "Special bundles around Diwali, Lohri and Baisakhi. Ask in store for this season's offers." },
+];
+
+
 const BEST_SELLERS = Array.from({ length: 8 }, (_, i) => ({
   id: i + 1,
   name: "Cumin seeds (Jeera)",
@@ -101,7 +108,7 @@ export default function Home() {
             Order quality Indian staples in bulk at fair prices and collect your
             order from Bhardwaj Grocery Store.
           </p>
-          <Link to="/categories" className="home-btn">View Products</Link>
+          <Link to="/products" className="home-btn">View Products</Link>
         </div>
       </section>
 
@@ -124,7 +131,7 @@ export default function Home() {
       <section className="home-section" aria-labelledby="best-title">
         <div className="home-section__head">
           <h2 id="best-title" className="home-title">Best Selling Products</h2>
-          <Link to="/categories" className="home-link">View All Products</Link>
+          <Link to="/products" className="home-link">View All Products</Link>
         </div>
 
         <div className="home-carousel">
@@ -153,8 +160,15 @@ export default function Home() {
 
       {/* Wholesale deals */}
       <section className="home-deals" aria-labelledby="deals-title">
-        <h2 id="deals-title" className="home-title">Wholesale Deals</h2>
-        <p className="home-deals__empty">New bulk deals will appear here soon.</p>
+        <div className="sv-grid">
+          {DEALS.map((d) => (
+            <div className="sv-card sv-deal" key={d.title}>
+              <span className="sv-tag">{d.tag}</span>
+              <h3>{d.title}</h3>
+              <p>{d.text}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* How click & collect works */}

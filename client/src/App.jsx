@@ -72,21 +72,15 @@ export default function App() {
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/order-confirmation/:orderNumber" element={<RequireAuth><Page title="Order Confirmation" /></RequireAuth>} />
 
-        {/* <Route path="/deals" element={<ComingSoon title="Deals" />} />
-        <Route path="/faqs" element={<ComingSoon title="FAQs" />} />
-        <Route path="/about" element={<ComingSoon title="About Us" />} />
-        <Route path="/click-and-collect" element={<ComingSoon title="How Click & Collect Works" />} />
-        <Route path="/refund-policy" element={<ComingSoon title="Order Cancellation and Refund Policy" />} />
-        <Route path="/terms" element={<ComingSoon title="Terms & Conditions" />} />
-        <Route path="/privacy" element={<ComingSoon title="Privacy Policy" />} /> */}
+       
 
         <Route path="/deals" element={<Navigate to="/services" replace />} />
-  <Route path="/faqs" element={<FaqsPage />} />
-  <Route path="/about" element={<AboutPage />} />
-  <Route path="/click-and-collect" element={<ClickAndCollectPage />} />
-  <Route path="/refund-policy" element={<RefundPolicyPage />} />
-  <Route path="/terms" element={<TermsPage />} />
-  <Route path="/privacy" element={<PrivacyPage />} /> 
+        <Route path="/faqs" element={<FaqsPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/click-and-collect" element={<ClickAndCollectPage />} />
+        <Route path="/refund-policy" element={<RefundPolicyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} /> 
 
 
         <Route path="*" element={<Page title="Page not found" />} />

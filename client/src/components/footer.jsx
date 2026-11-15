@@ -10,7 +10,7 @@ import "../assets/styles/footer.css";
 
 const QUICK_LINKS = [
   { label: "Categories", to: "/categories" },
-  { label: "Deals", to: "/deals" },
+  { label: "Services", to: "/services" },
   { label: "FAQs", to: "/faqs" },
   { label: "About Us", to: "/about" },
 ];
@@ -27,7 +27,7 @@ const STORE = {
   address: "Amritsar, Punjab, India",
   phone: "+91 xxxx-nnnnnn",
   email: "info@bhardwaj.hotmail.com",
-  hours: "Mon - Sun 10:00 AM - 9:00 PM",
+  hours: "Mon - Sun 07:00 AM - 11:00 PM",
 };
 const SOCIAL = {
   facebook: "https://facebook.com/",
