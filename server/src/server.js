@@ -12,15 +12,12 @@ import cartRouter from "./routes/cart.js";
 import staffRouter from "./routes/staff.js";
 import adminRouter from "./routes/admin.js";
 import checkoutRouter from "./routes/checkout.js";
-import { handleStripeWebhook } from "./controllers/stripeWebhook.js";
 
 import checkoutRouter from "./routes/checkout.js";
 import { handleStripeWebhook } from "./controllers/stripeWebhook.js";
 
 
 const app = express();
-
-app.post("/api/webhooks/stripe", express.raw({ type: "application/json" }), handleStripeWebhook);
 
 app.use(express.json());
 
