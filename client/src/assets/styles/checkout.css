@@ -156,3 +156,65 @@
   .checkout-field--narrow { max-width: none; }
   .checkout-actions { grid-template-columns: 1fr; gap: 16px; }
 }
+
+/* Demo payment notice above the card fields */
+.checkout-demo-note {
+  margin-bottom: 28px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #fff3e0;
+  color: #7a4a00;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Outline button (used for "Email me the details") */
+.checkout-btn--outline {
+  border: 1px solid #2e7d32;
+  background: #fff;
+  color: #2e7d32;
+}
+.checkout-btn--outline:hover:not(:disabled) { background: #eef6ee; }
+
+/* Order Confirmed modal */
+.checkout-modal {
+  width: min(480px, calc(100vw - 32px));
+  padding: 0;
+  border: 0;
+  border-radius: 20px;
+  background: #e9f2e9;
+  color: #1a1a1a;
+  font-family: Roboto, "Segoe UI", Arial, sans-serif;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+}
+.checkout-modal::backdrop { background: rgba(0, 0, 0, 0.5); }
+
+.checkout-modal__content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 32px 28px;
+  text-align: center;
+}
+.checkout-modal h2 { margin: 0; font-size: 26px; font-weight: 700; }
+.checkout-modal p { margin: 0; line-height: 1.5; }
+
+.checkout-modal__ids { margin: 8px 0; font-size: 15px; }
+.checkout-modal__reminder { color: #f57c00; font-size: 13px; }
+
+.checkout-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+.checkout-modal__actions .checkout-btn { min-width: 160px; padding: 0 20px; }
+
+.checkout-modal__status { min-height: 1.4em; color: #1a4a1e; font-size: 14px; }
+.checkout-modal__status a { color: #1a4a1e; }
+
+@media (max-width: 480px) {
+  .checkout-modal__content { padding: 24px 18px; }
+  .checkout-modal__actions { flex-direction: column; }
+  .checkout-modal__actions .checkout-btn { width: 100%; }
+}
