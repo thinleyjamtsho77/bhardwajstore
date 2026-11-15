@@ -5,8 +5,6 @@ import { listStaff, createStaff, updateStaff, deleteStaff } from "../controllers
 
 const router = express.Router();
 
-// The login cookie carries the role from when it was issued, so a demoted or deleted
-// admin could keep a valid token. For this sensitive area, check the database every time.
 async function requireActiveAdmin(req, res, next) {
   try {
     const [rows] = await pool.execute(

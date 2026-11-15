@@ -41,27 +41,8 @@ export default function AdminNavbar({ onSearch, onNotifications, onMenuClick, me
       </Link>
 
       <div className="admin-navbar__actions">
-        <button type="button" className="admin-navbar__icon" aria-label="Search" onClick={onSearch}>
-          <Icon>
-            <circle cx="10.5" cy="10.5" r="7" />
-            <path d="M16 16l5 5" />
-          </Icon>
-        </button>
-
-        <button type="button" className="admin-navbar__icon" aria-label="Notifications" onClick={onNotifications}>
-          <Icon>
-            <path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z" />
-            <path d="M10 21h4" />
-          </Icon>
-        </button>
-
-        <div
-          className="admin-navbar__avatar"
-          role="img"
-          aria-label={user ? `Signed in as ${user.name} (${user.role})` : "Not signed in"}
-          title={user?.name}
-        >
-          {getInitials(user?.name)}
+        <div className="admin-navbar__greeting">
+          Greetings, {user?.name || "Guest"}
         </div>
       </div>
     </header>
