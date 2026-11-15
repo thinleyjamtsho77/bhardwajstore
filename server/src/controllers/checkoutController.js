@@ -168,7 +168,6 @@ export async function createCheckout(req, res) {
       {
         amount: totalPaise,
         currency: CURRENCY,
-        payment_method_types: ["card"],
         receipt_email: contact.email,
         description: `Bhardwaj Grocery Store order ${orderNumber}`,
         metadata: { order_id: String(orderId), order_number: orderNumber, user_id: String(userId) },
