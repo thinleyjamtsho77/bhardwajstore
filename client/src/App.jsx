@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router";
 import MainLayout from "./components/main-layout";
-import "./assets/styles/admin-management.css";
+import "./assets/styles/admin/admin-management.css";
 import RequireAuth from "./components/RequireAuth";
 import Page from "./components/PlaceholderPage";
 import ScrollToTop from "./components/ScrollToTop";
@@ -25,8 +25,8 @@ import OrderHistory from "./pages/OrderHistory";
 import Checkout from "./pages/Checkout";
 import ProductListing from "./pages/ProductListing";
 import ProductDetail from "./pages/ProductDetail";
-import ProductManagement from "./pages/admin/ProductManagement";
-import ServicesPage from "./pages/ServicesPage"; // NEW
+import ServicesPage from "./pages/ServicesPage";
+
 
 // Admin pages
 import AdminLayout from "./components/AdminLayout";
@@ -37,6 +37,7 @@ import AdminCategoriesPreview from "./pages/admin/AdminCategoriesPreview";
 import StaffManagement from "./pages/admin/StaffManagement";
 import CustomerManagement from "./pages/admin/CustomerManagement";
 import InventoryManagement from "./pages/admin/InventoryManagement";
+import ProductManagement from "./pages/admin/ProductManagement";
 
 //Preventive measure for features that are not completed yet
 import AdminComingSoon from "./components/AdminComingSoon";
@@ -67,6 +68,8 @@ export default function App() {
         <Route path="/order-history" element={<RequireAuth><OrderHistory /></RequireAuth>} />
         <Route path="/checkout" element={<RequireAuth><Checkout /></RequireAuth>} />
         <Route path="/all-products" element={<RequireAuth><AllProducts /></RequireAuth>} /> {/* FIX */}
+        <Route path="/products" element={<RequireAuth><ProductListing /></RequireAuth>} />
+        <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/order-confirmation/:orderNumber" element={<RequireAuth><Page title="Order Confirmation" /></RequireAuth>} />
 
         {/* <Route path="/deals" element={<ComingSoon title="Deals" />} />
@@ -78,12 +81,12 @@ export default function App() {
         <Route path="/privacy" element={<ComingSoon title="Privacy Policy" />} /> */}
 
         <Route path="/deals" element={<Navigate to="/services" replace />} />
-<Route path="/faqs" element={<FaqsPage />} />
-<Route path="/about" element={<AboutPage />} />
-<Route path="/click-and-collect" element={<ClickAndCollectPage />} />
-<Route path="/refund-policy" element={<RefundPolicyPage />} />
-<Route path="/terms" element={<TermsPage />} />
-<Route path="/privacy" element={<PrivacyPage />} />
+  <Route path="/faqs" element={<FaqsPage />} />
+  <Route path="/about" element={<AboutPage />} />
+  <Route path="/click-and-collect" element={<ClickAndCollectPage />} />
+  <Route path="/refund-policy" element={<RefundPolicyPage />} />
+  <Route path="/terms" element={<TermsPage />} />
+  <Route path="/privacy" element={<PrivacyPage />} /> 
 
 
         <Route path="*" element={<Page title="Page not found" />} />
@@ -101,7 +104,7 @@ export default function App() {
         <Route index element={<AdminDashboard />} />
         <Route path="categories" element={<AdminCategoriesPage />} />
         <Route path="categories-preview" element={<AdminCategoriesPreview />} />
-        <Route path="products" element={<ProductManagement />} /> {/* FIX */}
+        <Route path="products" element={<ProductManagement />} />
         <Route path="orders" element={<AdminComingSoon title="Order Mangement" />} />
         <Route path="customers" element={<CustomerManagement />} />
         <Route path="staffs" element={<StaffManagement />} />
