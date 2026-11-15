@@ -118,10 +118,8 @@ function Categories() {
                   </p>
                 )}
 
-                {/* The link's ::after stretches over the whole card, so
-                    clicking anywhere on the card navigates. */}
                 <Link
-                  to={`/categories/${category.id}`}
+                  to={`/products?categoryId=${category.id}`}
                   className="category-card__cta"
                   aria-label={`Explore ${category.name}`}
                 >
