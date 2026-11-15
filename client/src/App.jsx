@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router";
 import MainLayout from "./components/main-layout";
-import "./assets/styles/admin-management.css";
+import "./assets/styles/admin/admin-management.css";
 import RequireAuth from "./components/RequireAuth";
 import Page from "./components/PlaceholderPage";
 

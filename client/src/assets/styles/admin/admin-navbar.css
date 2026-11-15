@@ -70,6 +70,12 @@
   outline-offset: 3px;
 }
 
+.admin-navbar__greeting {
+  color: #19451c;
+  font-size: 16px;
+  font-weight: 600;
+}
+
 @media (max-width: 900px) {
   .admin-navbar { padding: 0 16px; gap: 8px; }
   .admin-navbar__menu { display: flex; }

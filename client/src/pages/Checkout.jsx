@@ -245,27 +245,27 @@ function CheckoutForm() {
           <div className="checkout-grid">
             <div className="checkout-field">
               <label htmlFor="first-name">First Name<span className="checkout-required" aria-hidden="true">*</span></label>
-              <input id="first-name" autoComplete="given-name" value={form.firstName} onChange={setField("firstName")} maxLength={50} required disabled={locked} />
+              <input id="first-name" autoComplete="off" value={form.firstName} onChange={setField("firstName")} maxLength={50} required disabled={locked} />
             </div>
             <div className="checkout-field">
               <label htmlFor="last-name">Last Name<span className="checkout-required" aria-hidden="true">*</span></label>
-              <input id="last-name" autoComplete="family-name" value={form.lastName} onChange={setField("lastName")} maxLength={50} required disabled={locked} />
+              <input id="last-name" autoComplete="off" value={form.lastName} onChange={setField("lastName")} maxLength={50} required disabled={locked} />
             </div>
           </div>
 
           <div className="checkout-field">
             <label htmlFor="email">Email Address<span className="checkout-required" aria-hidden="true">*</span></label>
-            <input id="email" type="email" autoComplete="email" value={form.email} onChange={setField("email")} maxLength={100} required disabled={locked} aria-describedby="email-note" />
+            <input id="email" type="email" autoComplete="off" value={form.email} onChange={setField("email")} maxLength={100} required disabled={locked} aria-describedby="email-note" />
           </div>
 
           <div className="checkout-field">
             <label htmlFor="phone">Mobile Number<span className="checkout-required" aria-hidden="true">*</span></label>
-            <input id="phone" type="tel" autoComplete="tel" value={form.phone} onChange={setField("phone")} maxLength={20} required disabled={locked} />
+            <input id="phone" type="tel" autoComplete="off" value={form.phone} onChange={setField("phone")} maxLength={20} required disabled={locked} />
           </div>
 
           <div className="checkout-field">
             <label htmlFor="address">Home Address <span className="checkout-optional">(optional)</span></label>
-            <input id="address" autoComplete="street-address" value={form.address} onChange={setField("address")} maxLength={255} disabled={locked} />
+            <input id="address" autoComplete="off" value={form.address} onChange={setField("address")} maxLength={255} disabled={locked} />
           </div>
 
           <p id="email-note" className="checkout-note">
@@ -312,17 +312,17 @@ function CheckoutForm() {
 
             <div className="checkout-field">
               <label htmlFor="name-on-card">Name on Card</label>
-              <input id="name-on-card" autoComplete="cc-name" placeholder="Name" value={cardForm.name} onChange={setCardField("name")} maxLength={100} disabled={locked} />
+              <input id="name-on-card" autoComplete="off" placeholder="Name" value={cardForm.name} onChange={setCardField("name")} maxLength={100} disabled={locked} />
             </div>
 
             <div className="checkout-field">
               <label htmlFor="card-expiry">Expiry Date</label>
-              <input id="card-expiry" inputMode="numeric" autoComplete="cc-exp" placeholder="MM/YY" value={cardForm.expiry} onChange={setCardField("expiry", formatExpiry)} maxLength={5} disabled={locked} />
+              <input id="card-expiry" inputMode="numeric" autoComplete="off" placeholder="MM/YY" value={cardForm.expiry} onChange={setCardField("expiry", formatExpiry)} maxLength={5} disabled={locked} />
             </div>
 
             <div className="checkout-field checkout-field--narrow">
               <label htmlFor="card-cvv">CVV</label>
-              <input id="card-cvv" inputMode="numeric" autoComplete="cc-csc" placeholder="CVV" value={cardForm.cvv} onChange={setCardField("cvv", (v) => digitsOnly(v).slice(0, 4))} maxLength={4} disabled={locked} />
+              <input id="card-cvv" inputMode="numeric" autoComplete="off" placeholder="CVV" value={cardForm.cvv} onChange={setCardField("cvv", (v) => digitsOnly(v).slice(0, 4))} maxLength={4} disabled={locked} />
             </div>
           </div>
 
