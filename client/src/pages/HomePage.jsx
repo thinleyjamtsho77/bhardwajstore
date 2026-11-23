@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import "../assets/styles/index.css";
 import "../assets/styles/home.css";
@@ -6,16 +6,29 @@ import "../assets/styles/home.css";
 const img = (file) => new URL(`../assets/images/${file}`, import.meta.url).href;
 const categories_img = (file) => new URL(`../assets/images/categories/${file}`, import.meta.url).href;
 
-const CATEGORIES = [
-  { slug: "spices", name: "Spices", image: categories_img("spices.png") },,
-  { slug: "cereals", name: "Cereals", image: categories_img("cereals.png") },
-  { slug: "flours", name: "Flours", image: categories_img("flours.png") },
-  { slug: "oils-ghee", name: "Oils & Ghee", image: categories_img("oil_category.png") },
-  { slug: "pulses-lentils", name: "Pulses & Lentils", image: categories_img("pulses.png") },
-  { slug: "dry-fruits-nuts", name: "Dry Fruits & Nuts", image: categories_img("nuts.png") },
+
+const LOCAL_IMAGES = [
+  { match: "spice", image: categories_img("spices.png") },
+  { match: "cereal", image: categories_img("cereals.png") },
+  { match: "flour", image: categories_img("flours.png") },
+  { match: "oil", image: categories_img("oil_category.png") },
+  { match: "pulse", image: categories_img("pulses.png") },
+  { match: "lentil", image: categories_img("pulses.png") },
+  { match: "nut", image: categories_img("nuts.png") },
+  { match: "fruit", image: categories_img("nuts.png") },
 ];
 
-// Placeholder data until the best-sellers API exists
+const localImageFor = (name) =>
+  LOCAL_IMAGES.find((entry) => String(name).toLowerCase().includes(entry.match))?.image;
+
+const DEALS = [
+  { tag: "Save 10%", title: "Bulk Saver", text: "Buy 10 kg or more and pay ₹18/kg instead of ₹20/kg." },
+  { tag: "Wholesale", title: "Restaurants & Caterers", text: "Ordering 50 kg or more regularly? Ask us for a special rate and a weekly supply plan." },
+  { tag: "Family", title: "Monthly Grocery Pack", text: "Stock up on flour, oil, pulses, spices and rice once a month and save on every kilo." },
+  { tag: "Seasonal", title: "Festival Combos", text: "Special bundles around Diwali, Lohri and Baisakhi. Ask in store for this season's offers." },
+];
+
+
 const BEST_SELLERS = Array.from({ length: 8 }, (_, i) => ({
   id: i + 1,
   name: "Cumin seeds (Jeera)",
@@ -82,8 +95,41 @@ function BenefitIcon({ name }) {
   );
 }
 
+function CategoryTileImage({ category }) {
+  const [failed, setFailed] = useState(false);
+  const own = category.image || category.imageUrl;
+  const src = failed || !own ? localImageFor(category.name) : own;
+
+  if (!src) {
+    return <span className="home-category__placeholder" aria-hidden="true">{category.name.charAt(0)}</span>;
+  }
+  return <img src={src} alt="" loading="lazy" onError={() => setFailed(true)} />;
+}
+
 export default function Home() {
   const trackRef = useRef(null);
+  const [categories, setCategories] = useState([]);
+  const [categoriesStatus, setCategoriesStatus] = useState("loading"); 
+
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch("/api/categories", { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error("Unable to load categories");
+        return res.json();
+      })
+      .then((data) => {
+        setCategories(data);
+        setCategoriesStatus("ready");
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setCategoriesStatus("error");
+      });
+
+    return () => controller.abort();
+  }, []);
 
   function scrollProducts(direction) {
     const track = trackRef.current;
@@ -101,18 +147,29 @@ export default function Home() {
             Order quality Indian staples in bulk at fair prices and collect your
             order from Bhardwaj Grocery Store.
           </p>
-          <Link to="/categories" className="home-btn">View Products</Link>
+          <Link to="/products" className="home-btn">View Products</Link>
         </div>
       </section>
 
-      {/* Shop by category */}
+      {/* Shop by category: each tile opens the product listing for that category */}
       <section className="home-section" aria-labelledby="cat-title">
         <h2 id="cat-title" className="home-title">Shop by Category</h2>
+
+        {categoriesStatus === "loading" && <p className="home-note" role="status">Loading categories…</p>}
+        {categoriesStatus === "error" && (
+          <p className="home-note" role="alert">
+            We couldn’t load the categories. <Link to="/products">Browse all products</Link>
+          </p>
+        )}
+        {categoriesStatus === "ready" && categories.length === 0 && (
+          <p className="home-note">No categories yet.</p>
+        )}
+
         <ul className="home-categories">
-          {CATEGORIES.map((c) => (
-            <li key={c.slug}>
-              <Link to={`/categories/${c.slug}`} className="home-category">
-                <img src={c.image} alt="" loading="lazy" />
+          {categories.slice(0, 6).map((c) => (
+            <li key={c.id}>
+              <Link to={`/products?categoryId=${c.id}`} className="home-category">
+                <CategoryTileImage category={c} />
                 <span>{c.name}</span>
               </Link>
             </li>
@@ -124,7 +181,7 @@ export default function Home() {
       <section className="home-section" aria-labelledby="best-title">
         <div className="home-section__head">
           <h2 id="best-title" className="home-title">Best Selling Products</h2>
-          <Link to="/categories" className="home-link">View All Products</Link>
+          <Link to="/products" className="home-link">View All Products</Link>
         </div>
 
         <div className="home-carousel">
@@ -153,8 +210,16 @@ export default function Home() {
 
       {/* Wholesale deals */}
       <section className="home-deals" aria-labelledby="deals-title">
-        <h2 id="deals-title" className="home-title">Wholesale Deals</h2>
-        <p className="home-deals__empty">New bulk deals will appear here soon.</p>
+        <h2 id="deal-title" className="home-title">Fresh Deals</h2>
+        <div className="sv-grid">
+          {DEALS.map((d) => (
+            <div className="sv-card sv-deal" key={d.title}>
+              <span className="sv-tag">{d.tag}</span>
+              <h3>{d.title}</h3>
+              <p>{d.text}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* How click & collect works */}

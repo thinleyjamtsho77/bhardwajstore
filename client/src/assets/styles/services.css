@@ -1,0 +1,56 @@
+.sv-page { max-width: 1100px; margin: 0 auto; padding: 0 20px 48px; color: #1a1a1a; }
+.sv-page * { box-sizing: border-box; }
+
+.sv-hero { background: #1f4d24; color: #fff; border-radius: 16px; padding: 48px 32px; margin: 24px 0 32px; text-align: center; }
+.sv-hero h1 { margin: 0 0 12px; font-size: 38px; }
+.sv-hero p { margin: 0 auto 24px; max-width: 560px; font-size: 18px; color: #e3f1e0; }
+.sv-hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+.sv-btn { display: inline-block; padding: 12px 24px; border-radius: 10px; font-weight: 600; text-decoration: none; font-size: 15px; }
+.sv-btn-primary { background: #6abf69; color: #11331a; }
+.sv-btn-light { background: #fff; color: #1f4d24; }
+
+.sv-section { margin-bottom: 40px; }
+.sv-section h2 { font-size: 28px; margin: 0 0 12px; color: #1f4d24; }
+.sv-lead { margin: 0 0 16px; font-size: 16px; color: #444; }
+.sv-note { margin: 12px 0 0; font-size: 13px; color: #666; }
+
+.sv-card { background: #fff; border: 1px solid #e3e3e3; border-radius: 14px; padding: 22px; }
+.sv-card h3 { margin: 0 0 8px; font-size: 19px; color: #111; }
+.sv-card p { margin: 0 0 8px; line-height: 1.5; color: #333; }
+
+.sv-hours { max-width: 520px; }
+.sv-status { display: inline-block; padding: 4px 14px; border-radius: 14px; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+.sv-status.open { background: #e3f5e1; color: #1b7a1b; }
+.sv-status.closed { background: #fde8e8; color: #c0392b; }
+.sv-hours-main { font-size: 18px; font-weight: 600; color: #111; }
+.sv-hours-list { list-style: none; margin: 10px 0 0; padding: 0; }
+.sv-hours-list li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #333; }
+.sv-hours-list li:last-child { border-bottom: none; }
+
+.sv-two-col { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; }
+.sv-table-wrap { overflow-x: auto; }
+.sv-table { width: 100%; border-collapse: collapse; }
+.sv-table th { text-align: left; font-size: 13px; color: #555; padding: 10px 8px; border-bottom: 2px solid #1f4d24; }
+.sv-table td { padding: 12px 8px; border-bottom: 1px solid #eee; font-size: 16px; color: #111; }
+.sv-table tr:last-child td { border-bottom: none; }
+
+.sv-calc label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px; color: #111; }
+.sv-calc input { padding: 10px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; color: #111; background: #fff; }
+.sv-calc-result { margin-top: 16px; padding: 14px; background: #f3f9f2; border-radius: 10px; }
+.sv-calc-result strong { color: #1f4d24; }
+.sv-saving { color: #1b7a1b !important; font-weight: 700; font-size: 18px; }
+
+.sv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+.sv-tag { display: inline-block; background: #fff3cd; color: #8a5a00; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 10px; margin-bottom: 10px; }
+.sv-icon { font-size: 30px; margin-bottom: 8px; }
+.sv-link { color: #2e7d32; font-weight: 600; text-decoration: none; font-size: 14px; }
+.sv-link:hover { text-decoration: underline; }
+
+.sv-contact a { color: #2e7d32; }
+
+@media (max-width: 800px) {
+  .sv-two-col { grid-template-columns: 1fr; }
+  .sv-hero { padding: 32px 18px; }
+  .sv-hero h1 { font-size: 30px; }
+}

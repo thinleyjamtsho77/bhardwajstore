@@ -7,7 +7,7 @@ import "../assets/styles/navbar.css";
 const NAV_ITEMS = [
   { label: "Home", to: "/" },
   { label: "Categories", to: "/categories" },
-  { label: "Deals", to: "/deals" },
+  { label: "Services", to: "/services" },
   { label: "FAQs", to: "/faqs" },
 ];
 
@@ -32,15 +32,6 @@ function BasketIcon() {
   );
 }
 
-/**
- * Shared site header.
- *
- * Props (all optional):
- *  - cartCount: number shown as a badge on the basket
- *  - onSearch: called when the search icon is clicked
- *
- * Auth state comes from useAuth(), so this must render inside <AuthProvider>.
- */
 
 function getInitials(name) {
   const parts = (name || "").trim().split(/\s+/).filter(Boolean);

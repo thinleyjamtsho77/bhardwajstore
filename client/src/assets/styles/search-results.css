@@ -46,6 +46,53 @@
 }
 
 /* ==============================
+   Search Input and Suggestions 
+============================== */
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.search-input-wrapper input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.search-suggestions li button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: white;
+  text-align: left;
+  cursor: pointer;
+}
+
+.search-suggestions li button:hover {
+  background-color: #eaf3eb;
+}
+
+/* ==============================
    Search controls
 ============================== */
 

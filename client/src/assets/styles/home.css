@@ -3,7 +3,7 @@
 .home {
   --home-green: #2e7d32;
   --home-green-btn: #4caf50;
-  --home-peach: #fde4cb;
+  --home-peach: #f5f1ec;
   --home-text: #1a1a1a;
   font-family: Roboto, "Segoe UI", Arial, sans-serif;
   color: var(--home-text);
@@ -171,6 +171,31 @@
 .home-deals .home-title { margin-bottom: 24px; }
 .home-deals__empty { margin: 0; text-align: center; color: #6b5a48; }
 
+.home-deals {
+  padding: 40px 20px;
+}
+
+.home-deals .sv-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.home-deals .sv-card {
+  box-sizing: border-box;
+  flex: 0 1 300px;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid #dce7d9;
+  border-radius: 14px;
+  background-color: #fff;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(25, 69, 28, 0.08);
+}
+
 /* Steps */
 .home-steps {
   display: flex;
@@ -243,6 +268,21 @@
 .home-benefits li + li { border-left: 1px solid #ddd; }
 .home-benefits svg { flex: none; width: 96px; height: 96px; }
 .home-benefits span { max-width: 7ch; }
+
+.home-note { text-align: center; color: #555; }
+
+.home-category__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  background: #e3f1e3;
+  color: #2e7d32;
+  font-size: 48px;
+  font-weight: 600;
+}
 
 /* Tablet */
 @media (max-width: 900px) {
