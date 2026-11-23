@@ -38,6 +38,7 @@ import StaffManagement from "./pages/admin/StaffManagement";
 import CustomerManagement from "./pages/admin/CustomerManagement";
 import InventoryManagement from "./pages/admin/InventoryManagement";
 import ProductManagement from "./pages/admin/ProductManagement";
+import OrderManagement from "./pages/admin/OrderManagement";
 
 //Preventive measure for features that are not completed yet
 import AdminComingSoon from "./components/AdminComingSoon";
@@ -99,7 +100,7 @@ export default function App() {
         <Route path="categories" element={<AdminCategoriesPage />} />
         <Route path="categories-preview" element={<AdminCategoriesPreview />} />
         <Route path="products" element={<ProductManagement />} />
-        <Route path="orders" element={<AdminComingSoon title="Order Mangement" />} />
+        <Route path="orders" element={<OrderManagement />} />
         <Route path="customers" element={<CustomerManagement />} />
         <Route path="staffs" element={<StaffManagement />} />
         <Route path="inventory" element={<InventoryManagement />} />
