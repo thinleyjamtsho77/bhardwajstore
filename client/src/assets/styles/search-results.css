@@ -21,16 +21,23 @@
   font-size: 24px;
 }
 
-.category-select {
+.category-button {
   display: block;
   width: 100%;
   margin-bottom: 12px;
-  padding: 10px 8px;
+  padding: 10px 12px;
   border: none;
   border-radius: 6px;
   background: #fff;
   color: #222;
+  text-align: left;
   cursor: pointer;
+}
+
+.category-button.active {
+  background: #d5ead8;
+  color: #17451f;
+  font-weight: bold;
 }
 
 .search-content {
@@ -209,30 +216,49 @@
   font-size: 12px;
 }
 
+
 .product-actions {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
   margin-top: 10px;
 }
 
-.wishlist-button {
-  width: 34px;
-  border: 1px solid #aaa;
-  border-radius: 6px;
+.search-page .product-actions .wishlist-button {
+  flex: 0 0 42px;
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  padding: 0;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #08751b;
+  border-radius: 8px;
   background: white;
+  color: #08751b;
   font-size: 22px;
   cursor: pointer;
 }
 
-.add-cart-button {
-  flex: 1;
-  padding: 8px 4px;
+.search-page .product-actions .add-cart-button {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 42px;
+  padding: 0 12px;
+  box-sizing: border-box;
+
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   background: #14251a;
   color: white;
+  font-size: 16px;
   cursor: pointer;
 }
+
 
 /* ==============================
    Pagination
@@ -303,7 +329,7 @@
   filter: brightness(0.88);
 }
 
-.search-page .category-select:hover {
+.search-page .category-button:hover {
   background-color: #eaf3eb;
 }
 
@@ -314,6 +340,46 @@
 
 .add-cart-button:hover {
   background-color: #347041;
+}
+
+.stock-label.out-of-stock {
+  background: #f8d7da;
+  color: #842029;
+}
+
+.stock-label.unavailable {
+  background: #e9ecef;
+  color: #495057;
+}
+
+
+/* Search page loading and error states */
+.search-status,
+.search-error {
+  padding: 32px;
+  text-align: center;
+}
+
+.search-error {
+  color: #b42318;
+}
+
+/* Product detail navigation */
+.product-card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.product-card-link:hover {
+  color: inherit;
+}
+
+.product-card-link:focus-visible {
+  outline: 2px solid #347041;
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 /* ==============================

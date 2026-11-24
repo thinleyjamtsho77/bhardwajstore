@@ -1,72 +1,128 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProductCard from "../components/product-card";
 import "../assets/styles/search-results.css";
-
-const sampleProducts = [
-  { id: 1, name: "Olive Oil", price: 4.0, stock: "In Stock" },
-  { id: 2, name: "Sunflower Oil", price: 3.5, stock: "In Stock" },
-  { id: 3, name: "Coconut Oil", price: 6.0, stock: "In Stock" },
-];
-
-const categories = [
-  "Cereals",
-  "Pulses",
-  "Spices",
-  "Oils",
-  "Snacks",
-  "More",
-];
 
 const PAGE_SIZE = 6;
 
 export default function SearchResults() {
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const [search, setSearch] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
   const [sortBy, setSortBy] = useState("low-to-high");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedCategories, setSelectedCategories] = useState({});
+
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
+  // Fetch products and categories from the database
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const [productsResponse, categoriesResponse] =
+          await Promise.all([
+            fetch("/api/products"),
+            fetch("/api/categories"),
+          ]);
+
+        if (!productsResponse.ok || !categoriesResponse.ok) {
+          throw new Error("Failed to load products or categories.");
+        }
+
+        const [productsData, categoriesData] = await Promise.all([
+          productsResponse.json(),
+          categoriesResponse.json(),
+        ]);
+
+        if (
+          !Array.isArray(productsData) ||
+          !Array.isArray(categoriesData)
+        ) {
+          throw new Error("Invalid data received from the server.");
+        }
+
+        setProducts(productsData);
+        setCategories(categoriesData);
+      } catch (err) {
+        console.error("Error loading search page data:", err);
+        setError("Unable to load products. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  // Search suggestions based on product names
   const suggestions = search.trim()
-    ? sampleProducts
-      .filter((product) =>
-        product.name.toLowerCase().includes(search.trim().toLowerCase())
-      )
-      .slice(0, 5)
+    ? products
+        .filter((product) =>
+          product.name
+            ?.toLowerCase()
+            .includes(search.trim().toLowerCase())
+        )
+        .slice(0, 5)
     : [];
 
+  // Submit keyword search
   function handleSearch(event) {
     event.preventDefault();
-    setSubmittedSearch(search);
+
+    setSubmittedSearch(search.trim());
+    setCurrentPage(1);
+    setIsSearchFocused(false);
+  }
+
+  // Select a suggestion without submitting the search
+  function handleSuggestionClick(productName) {
+    setSearch(productName);
+    setIsSearchFocused(false);
+  }
+
+  // Toggle category filter
+  function handleCategoryClick(categoryId) {
+    setSelectedCategoryId((previous) =>
+      Number(previous) === Number(categoryId) ? null : categoryId
+    );
+
     setCurrentPage(1);
   }
 
-  function handleSuggestionClick(productName) {
-    setSearch(productName);
-  }
-
-  const filteredProducts = sampleProducts
+  // Filter and sort products
+  const filteredProducts = products
     .filter((product) =>
-      product.name.toLowerCase().includes(submittedSearch.trim().toLowerCase())
+      product.name
+        ?.toLowerCase()
+        .includes(submittedSearch.toLowerCase())
     )
     .filter((product) => {
-      // Preserve the existing category-filter behavior.
-      const selected = selectedCategories.Oils;
-
-      if (!selected || selected === "all") {
+      if (selectedCategoryId === null) {
         return true;
       }
 
-      return product.name.toLowerCase().includes(selected.toLowerCase());
+      return (
+        Number(product.categoryId) === Number(selectedCategoryId)
+      );
     })
     .sort((a, b) => {
+      const priceA = Number(a.price);
+      const priceB = Number(b.price);
+
       if (sortBy === "low-to-high") {
-        return a.price - b.price;
+        return priceA - priceB;
       }
 
       if (sortBy === "high-to-low") {
-        return b.price - a.price;
+        return priceB - priceA;
       }
 
       if (sortBy === "name") {
@@ -76,31 +132,42 @@ export default function SearchResults() {
       return 0;
     });
 
-  const totalPages = Math.ceil(filteredProducts.length / PAGE_SIZE);
-  const safePage = Math.min(currentPage, Math.max(1, totalPages));
+  // Pagination
+  const totalPages = Math.ceil(
+    filteredProducts.length / PAGE_SIZE
+  );
+
+  const safePage = Math.min(
+    currentPage,
+    Math.max(1, totalPages)
+  );
 
   const displayedProducts = filteredProducts.slice(
     (safePage - 1) * PAGE_SIZE,
     safePage * PAGE_SIZE
   );
 
-  function updateSearch(value) {
-    setSearch(value);
-    setCurrentPage(1);
-  }
-
   function updateSort(value) {
     setSortBy(value);
     setCurrentPage(1);
   }
 
-  function updateCategory(category, value) {
-    setSelectedCategories((previous) => ({
-      ...previous,
-      [category]: value,
-    }));
+  // Loading state
+  if (loading) {
+    return (
+      <div className="search-page">
+        <p className="search-status">Loading products...</p>
+      </div>
+    );
+  }
 
-    setCurrentPage(1);
+  // Error state
+  if (error) {
+    return (
+      <div className="search-page">
+        <p className="search-error">{error}</p>
+      </div>
+    );
   }
 
   return (
@@ -109,17 +176,21 @@ export default function SearchResults() {
         <h2>Categories</h2>
 
         {categories.map((category) => (
-          <select
-            key={category}
-            className="category-select"
-            aria-label={`${category} category`}
-            value={selectedCategories[category] || "all"}
-            onChange={(event) =>
-              updateCategory(category, event.target.value)
+          <button
+            key={category.id}
+            type="button"
+            className={
+              Number(selectedCategoryId) === Number(category.id)
+                ? "category-button active"
+                : "category-button"
             }
+            aria-pressed={
+              Number(selectedCategoryId) === Number(category.id)
+            }
+            onClick={() => handleCategoryClick(category.id)}
           >
-            <option value="all">All {category}</option>
-          </select>
+            {category.name}
+          </button>
         ))}
       </aside>
 
@@ -142,8 +213,12 @@ export default function SearchResults() {
                   <li key={product.id}>
                     <button
                       type="button"
-                      onMouseDown={(event) => event.preventDefault()}
-                      onClick={() => handleSuggestionClick(product.name)}
+                      onMouseDown={(event) =>
+                        event.preventDefault()
+                      }
+                      onClick={() =>
+                        handleSuggestionClick(product.name)
+                      }
                     >
                       {product.name}
                     </button>
@@ -185,7 +260,10 @@ export default function SearchResults() {
 
         <div className="product-grid">
           {displayedProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard
+              key={product.id}
+              product={product}
+            />
           ))}
         </div>
 
@@ -211,9 +289,13 @@ export default function SearchResults() {
                 type="button"
                 key={page}
                 className={
-                  page === safePage ? "page-number active" : "page-number"
+                  page === safePage
+                    ? "page-number active"
+                    : "page-number"
                 }
-                aria-current={page === safePage ? "page" : undefined}
+                aria-current={
+                  page === safePage ? "page" : undefined
+                }
                 onClick={() => setCurrentPage(page)}
               >
                 {page}
